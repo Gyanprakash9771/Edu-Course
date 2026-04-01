@@ -138,7 +138,7 @@ export default function MainNavbar() {
                                                     navigation.navigate("CourseScreen");
                                                 }}
                                             >
-                                                <DropdownItem title="Course Grid Layout" hasArrow />
+                                                <DropdownItem title="MY Course" hasArrow />
                                             </Pressable>
                                             <DropdownItem title="Advanced Course Filter" hasArrow />
                                             <DropdownItem title="Tutor Dashboard" />
@@ -513,7 +513,7 @@ export default function MainNavbar() {
                                                 navigation.navigate("CourseScreen");  // 👈 navigate
                                             }}
                                         >
-                                            <Text fontSize="md" fontWeight="bold">Course Grid</Text>
+                                            <Text fontSize="md" fontWeight="bold">My Course</Text>
                                         </Pressable>
                                         <Text fontSize="md" fontWeight="bold">Advanced Filter</Text>
                                         <Text fontSize="md" fontWeight="bold">Instructor</Text>
