@@ -21,8 +21,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
-    "web": {
-  "output": "static",
+"web": {
   "bundler": "metro",
   "favicon": "./assets/images/favicon.png"
 },
