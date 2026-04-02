@@ -1,7 +1,7 @@
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { Box, Divider, HStack, Text, useBreakpointValue } from "native-base";
+import { Box, Divider, HStack, Pressable, Text, useBreakpointValue } from "native-base";
 
-export default function Navbar() {
+export default function Navbar({ onOpenAuth }) {
 
   // 👇 Hide on mobile, show on tablet/web
   const showNavbar = useBreakpointValue({
@@ -18,7 +18,6 @@ export default function Navbar() {
         bg="#3bbc9b"
         px={20}
         py={4}
-        
       >
         <HStack justifyContent="space-between" alignItems="center">
 
@@ -59,9 +58,12 @@ export default function Navbar() {
 
             <Divider orientation="vertical" bg="white" thickness={0.6} h={4} />
 
-            <Text color="white" fontSize="lg" fontWeight="500">
-              Login / Register
-            </Text>
+            {/* ✅ UPDATED CLICKABLE TEXT */}
+            <Pressable onPress={onOpenAuth}>
+              <Text color="white" fontSize="lg" fontWeight="500">
+                Login / Register
+              </Text>
+            </Pressable>
 
           </HStack>
 

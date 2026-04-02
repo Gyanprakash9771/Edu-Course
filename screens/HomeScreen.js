@@ -1,6 +1,8 @@
 import { Box } from "native-base";
+import { useState } from "react";
 import { ScrollView, useWindowDimensions } from "react-native";
 
+import AuthModal from "../components/AuthModal";
 import CategoriesSection from "../components/CategoriesSection";
 import CoursesSection from "../components/CoursesSection";
 import CoursesSection1 from "../components/CoursesSection1";
@@ -16,12 +18,19 @@ export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
+  const [authOpen, setAuthOpen] = useState(false);
+
   return (
     <Box flex={1} position="relative">
 
       {/* 🔥 NAVBAR ALWAYS ON TOP */}
-      <Navbar />
-      <MainNavbar isMobile={isMobile} />
+      <Box position="relative" zIndex={1}>
+        <Navbar onOpenAuth={() => setAuthOpen(true)} />
+        <MainNavbar 
+          isMobile={isMobile} 
+          onOpenAuth={() => setAuthOpen(true)}  // ✅ FIXED
+        />
+      </Box>
 
       {/* 🔥 SCROLLABLE CONTENT */}
       <ScrollView>
@@ -35,11 +44,15 @@ export default function HomeScreen() {
         <CoursesSection isMobile={isMobile} />
         <CoursesSection1 isMobile={isMobile} />
         <ResultsSection isMobile={isMobile} />
-        {/* <StatsSection isMobile={isMobile} /> */}
-        {/* <TestimonialSection isMobile={isMobile} /> */}
         <PartnersSection isMobile={isMobile} />
         <FooterSection isMobile={isMobile} />
       </ScrollView>
+
+      {/* ✅ MODAL */}
+      <AuthModal
+        isOpen={authOpen}
+        onClose={() => setAuthOpen(false)}
+      />
 
     </Box>
   );

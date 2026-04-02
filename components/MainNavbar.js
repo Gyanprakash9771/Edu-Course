@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { ScrollView, useWindowDimensions } from "react-native";
 
-export default function MainNavbar() {
+export default function MainNavbar({ onOpenAuth }) {
 
     const { width } = useWindowDimensions();
     const isMobile = width < 768;
@@ -593,6 +593,27 @@ export default function MainNavbar() {
 
                                 {/* CONTACT */}
                                 <Text fontSize="lg" fontWeight="bold">Contact</Text>
+                                
+
+{/* 🔥 LOGIN / REGISTER (ONLY MOBILE ADDITION) */}
+<Pressable
+  mt={4}
+  onPress={() => {
+    setMenuOpen(false);
+    onOpenAuth && onOpenAuth(); // 🔥 THIS LINE OPENS MODAL
+  }}
+>
+  <Box
+    bg="#3bbc9b"
+    py={3}
+    borderRadius="md"
+    alignItems="center"
+  >
+    <Text color="white" fontWeight="bold">
+      Login / Register
+    </Text>
+  </Box>
+</Pressable>
 
                             </VStack>
                         </ScrollView>

@@ -1,8 +1,9 @@
 import { useRoute } from "@react-navigation/native";
 import { Box, HStack } from "native-base";
-import { useEffect, useRef } from "react"; // ✅ ADD
+import { useEffect, useRef, useState } from "react"; // ✅ ADD
 import { ScrollView, useWindowDimensions } from "react-native";
 
+import AuthModal from "../components/AuthModal";
 import CourseFooter from "../components/CourseFooter";
 import MainNavbar from "../components/MainNavbar";
 import Navbar from "../components/Navbar";
@@ -38,11 +39,14 @@ export default function CourseDetailsScreen() {
 
   const parsedId = parseInt(id);
   const course = courses.find(c => c.id === parsedId) || courses[0];
+  const [authOpen, setAuthOpen] = useState(false);
 
   return (
     <Box flex={1} bg={"white"}>
-      <Navbar />
-      <MainNavbar isMobile={isMobile} />
+      <Box position="relative" zIndex={1}>
+        <Navbar onOpenAuth={() => setAuthOpen(true)} />
+        <MainNavbar isMobile={isMobile} />
+      </Box>
 
       {/* ✅ ATTACH REF HERE */}
       <ScrollView ref={scrollRef}>
@@ -76,6 +80,10 @@ export default function CourseDetailsScreen() {
         />
         <CourseFooter/>
       </ScrollView>
+       <AuthModal
+              isOpen={authOpen}
+              onClose={() => setAuthOpen(false)}
+            />
     </Box>
   );
 }
