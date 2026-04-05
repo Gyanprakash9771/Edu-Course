@@ -1,18 +1,29 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Box, HStack, Image, Pressable, Text, VStack } from "native-base";
-import courses from "../data/courses"; // ✅ ADDED
+import { useEffect, useState } from "react";
+import API from "../services/api";
+
+const BASE_URL = "https://wuthering-lai-patently.ngrok-free.dev";
 
 export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();
+  const [courses, setCourses] = useState([]);
+
+  // ✅ FETCH FROM BACKEND
+  useEffect(() => {
+    API.get("/courses")
+      .then((res) => setCourses(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <Box px={{ base: 4, md: 10 }} mt={6}>
       
       <HStack flexWrap="wrap" justifyContent="center">
-        {courses.map((course, index) => (
+        {courses.map((course) => (
           <Box
-            key={index}
+            key={course._id}   // ✅ FIXED
             width={{
               base: "100%",
               sm: "48%",
@@ -40,12 +51,12 @@ export default function CourseGrid({ isMobile }) {
             {/* CLICKABLE IMAGE */}
             <Pressable
               onPress={() =>
-                navigation.navigate("CourseDetails", { id: index })
+                navigation.navigate("CourseDetail", { id: course._id }) // ✅ FIXED
               }
             >
               <Box position="relative">
                 <Image
-                  source={{ uri: course.image }}
+                  source={{ uri: `${BASE_URL}/uploads/${course.image}` }} // ✅ FIXED
                   alt="course"
                   height={220}
                   width="100%"
@@ -87,7 +98,7 @@ export default function CourseGrid({ isMobile }) {
               {/* CLICKABLE TITLE */}
               <Pressable
                 onPress={() =>
-                  navigation.navigate("CourseDetails", { id: index })
+                  navigation.navigate("CourseDetail", { id: course._id }) // ✅ FIXED
                 }
               >
                 <Text fontWeight="bold" fontSize="md">
@@ -100,7 +111,7 @@ export default function CourseGrid({ isMobile }) {
               </Text>
 
               <Text fontSize="sm" color="gray.500">
-                📚 {course.lessons}
+                📚 {course.lessons} Lessons
               </Text>
 
               <Text fontSize="sm">

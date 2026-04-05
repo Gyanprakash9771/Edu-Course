@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import { Box, HStack } from "native-base";
-import { useEffect, useRef, useState } from "react"; // ✅ ADD
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, useWindowDimensions } from "react-native";
 
 import AuthModal from "../components/AuthModal";
@@ -11,14 +11,14 @@ import CourseHero from "../components/courseDetails/CourseHero";
 import CourseMainContent from "../components/courseDetails/CourseMainContent";
 import CourseSidebar from "../components/courseDetails/CourseSidebar";
 import RelatedCourses from "../components/courseDetails/RelatedCourses";
-import courses from "../data/courses";
+import API from "../services/api"; // ✅ NEW
 
 export default function CourseDetailsScreen() {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
 
   const route = useRoute();
-  const scrollRef = useRef(null); // ✅ ADD
+  const scrollRef = useRef(null);
 
   let id = route?.params?.id;
 
@@ -32,14 +32,22 @@ export default function CourseDetailsScreen() {
     } catch (e) {}
   }
 
-  // ✅ SCROLL FIX
+  const [course, setCourse] = useState(null); // ✅ NEW
+  const [authOpen, setAuthOpen] = useState(false);
+
+  // ✅ SCROLL + FETCH
   useEffect(() => {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
+
+    if (!id) return;
+
+    API.get(`/courses/${id}`)
+      .then((res) => setCourse(res.data))
+      .catch((err) => console.log(err));
   }, [id]);
 
-  const parsedId = parseInt(id);
-  const course = courses.find(c => c.id === parsedId) || courses[0];
-  const [authOpen, setAuthOpen] = useState(false);
+  // ✅ LOADING FIX
+  if (!course) return null;
 
   return (
     <Box flex={1} bg={"white"}>
@@ -48,7 +56,6 @@ export default function CourseDetailsScreen() {
         <MainNavbar isMobile={isMobile} />
       </Box>
 
-      {/* ✅ ATTACH REF HERE */}
       <ScrollView ref={scrollRef}>
         
         <CourseHero course={course} isMobile={isMobile} />
@@ -76,14 +83,15 @@ export default function CourseDetailsScreen() {
 
         <RelatedCourses 
           isMobile={isMobile} 
-          currentCourseId={course.id} 
+          currentCourseId={course._id}   // ✅ FIXED
         />
         <CourseFooter/>
       </ScrollView>
-       <AuthModal
-              isOpen={authOpen}
-              onClose={() => setAuthOpen(false)}
-            />
+
+      <AuthModal
+        isOpen={authOpen}
+        onClose={() => setAuthOpen(false)}
+      />
     </Box>
   );
 }
