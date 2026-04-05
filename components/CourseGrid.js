@@ -12,10 +12,13 @@ export default function CourseGrid({ isMobile }) {
 
   // ✅ FETCH FROM BACKEND
   useEffect(() => {
-    API.get("/courses")
-      .then((res) => setCourses(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  API.get("/courses")
+    .then((res) => {
+      console.log("COURSES:", res.data); // ✅ ADD THIS
+      setCourses(res.data);
+    })
+    .catch((err) => console.log(err));
+}, []);
 
   return (
     <Box px={{ base: 4, md: 10 }} mt={6}>
