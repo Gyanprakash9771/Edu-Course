@@ -55,7 +55,7 @@ export default function AuthModal({ isOpen, onClose }) {
   };
 
   const handleSubmit = async () => {
-    onsole.log("BUTTON CLICKED"); 
+    console.log("BUTTON CLICKED"); 
     if (!isFormValid()) return;
 
     setLoading(true);
