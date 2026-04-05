@@ -1,16 +1,17 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import API from "../services/api"; // ✅ NEW
+import { setToken } from "../utils/storage"; // ✅ NEW
+
 import {
-    Box,
-    Button,
-    Checkbox,
-    HStack,
-    Input,
-    Modal,
-    Pressable,
-    Spinner,
-    Text,
-    VStack,
+  Box,
+  Button,
+  Checkbox,
+  HStack,
+  Input,
+  Modal,
+  Pressable,
+  Spinner,
+  Text,
+  VStack,
 } from "native-base";
 import { useState } from "react";
 
@@ -60,26 +61,20 @@ export default function AuthModal({ isOpen, onClose }) {
 
     try {
       if (isLogin) {
-        const res = await axios.post(
-          "https://wuthering-lai-patently.ngrok-free.dev/api/auth/login", // ✅ UPDATED
-          {
-            email,
-            password,
-          }
-        );
+        const res = await API.post("/auth/login", {   // ✅ CHANGED
+          email,
+          password,
+        });
 
-        await AsyncStorage.setItem("token", res.data.token);
+        await setToken(res.data.token);               // ✅ CHANGED
 
         onClose();
       } else {
-        const res = await axios.post(
-          "https://wuthering-lai-patently.ngrok-free.dev/api/auth/signup", // ✅ UPDATED
-          {
-            username,
-            email,
-            password,
-          }
-        );
+        await API.post("/auth/signup", {              // ✅ CHANGED
+          username,
+          email,
+          password,
+        });
 
         setIsLogin(true);
       }

@@ -11,7 +11,7 @@ import {
 } from "native-base";
 import { useState } from "react";
 import { ScrollView, useWindowDimensions } from "react-native";
-import logo from "../assets/images/logo.png";
+
 
 export default function MainNavbar({ onOpenAuth }) {
 
@@ -59,7 +59,7 @@ export default function MainNavbar({ onOpenAuth }) {
                 {/* LOGO */}
                 <HStack flex={1} ml={isMobile ? 0 : -12}>
                     <Image
-                        source={logo}
+                        source={require("../assets/images/logo.png")}
                         alt="Logo"
                         style={{ width: isMobile ? 160 : 168, height: 38 }}
                     />
