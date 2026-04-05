@@ -14,10 +14,10 @@ export default function CourseGrid({ isMobile }) {
   useEffect(() => {
   API.get("/courses")
     .then((res) => {
-      console.log("COURSES:", res.data); // ✅ ADD THIS
+      console.log("DATA:", res.data); // ✅ ADD THIS
       setCourses(res.data);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log("ERROR:", err));
 }, []);
 
   return (
