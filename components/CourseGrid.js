@@ -6,6 +6,7 @@ import API from "../services/api";
 
 // ✅ FIX: define BASE_URL
 const BASE_URL = "https://edutest-backend-0r41.onrender.com";
+// const BASE_URL = "https://edutest-backend-0r41.onrender.com";
 
 export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();
