@@ -4,7 +4,8 @@ import { Box, HStack, Image, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-const BASE_URL = "https://wuthering-lai-patently.ngrok-free.dev";
+baseURL: "https://edutest-backend.onrender.com/api";
+//b
 
 export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();

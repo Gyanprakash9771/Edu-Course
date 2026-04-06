@@ -2,7 +2,8 @@ import axios from "axios";
 import { getToken } from "../utils/storage";
 
 const API = axios.create({
-  baseURL: "https://wuthering-lai-patently.ngrok-free.dev/api",
+  //baseURL: "https://edutest-backend.onrender.com/api"
+  baseURL: "https://edutest-backend.onrender.com/api",
   withCredentials: false,
 });
 
