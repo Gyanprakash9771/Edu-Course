@@ -9,8 +9,9 @@ const API = axios.create({
 API.interceptors.request.use(async (req) => {
   const token = await getToken();
 
+  // ❌ DO NOT send token for user-side requests like /courses
   // ✅ ONLY send token for admin routes
-  if (token && req.url.includes("/admin")) {
+  if (token && req.url && req.url.startsWith("/admin")) {
     req.headers.Authorization = `Bearer ${token}`;
   }
 
