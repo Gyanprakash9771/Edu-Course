@@ -9,7 +9,8 @@ const API = axios.create({
 API.interceptors.request.use(async (req) => {
   const token = await getToken();
 
-  if (token) {
+  // ✅ ONLY send token for admin routes
+  if (token && req.url.includes("/admin")) {
     req.headers.Authorization = `Bearer ${token}`;
   }
 
