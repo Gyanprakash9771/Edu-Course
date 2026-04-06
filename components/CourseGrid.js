@@ -4,7 +4,7 @@ import { Box, HStack, Image, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-baseURL: "https://edutest-backend.onrender.com/api";
+baseURL: "https://edutest-backend-0r41.onrender.com/api"
 //b
 
 export default function CourseGrid({ isMobile }) {
