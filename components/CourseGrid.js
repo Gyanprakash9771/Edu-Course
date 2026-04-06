@@ -4,8 +4,8 @@ import { Box, HStack, Image, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-baseURL: "https://edutest-backend-0r41.onrender.com/api"
-//b
+// ✅ FIX: define BASE_URL
+const BASE_URL = "https://edutest-backend-0r41.onrender.com";
 
 export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();
@@ -13,21 +13,20 @@ export default function CourseGrid({ isMobile }) {
 
   // ✅ FETCH FROM BACKEND
   useEffect(() => {
-  API.get("/courses")
-    .then((res) => {
-      console.log("DATA:", res.data); // ✅ ADD THIS
-      setCourses(res.data);
-    })
-    .catch((err) => console.log("ERROR:", err));
-}, []);
+    API.get("/courses")
+      .then((res) => {
+        console.log("DATA:", res.data);
+        setCourses(res.data);
+      })
+      .catch((err) => console.log("ERROR:", err));
+  }, []);
 
   return (
     <Box px={{ base: 4, md: 10 }} mt={6}>
-      
       <HStack flexWrap="wrap" justifyContent="center">
         {courses.map((course) => (
           <Box
-            key={course._id}   // ✅ FIXED
+            key={course._id}
             width={{
               base: "100%",
               sm: "48%",
@@ -52,15 +51,14 @@ export default function CourseGrid({ isMobile }) {
               md: 530,
             }}
           >
-            {/* CLICKABLE IMAGE */}
             <Pressable
               onPress={() =>
-                navigation.navigate("CourseDetail", { id: course._id }) // ✅ FIXED
+                navigation.navigate("CourseDetail", { id: course._id })
               }
             >
               <Box position="relative">
                 <Image
-                  source={{ uri: `${BASE_URL}/uploads/${course.image}` }} // ✅ FIXED
+                  source={{ uri: `${BASE_URL}/uploads/${course.image}` }}
                   alt="course"
                   height={220}
                   width="100%"
@@ -93,16 +91,14 @@ export default function CourseGrid({ isMobile }) {
               </Box>
             </Pressable>
 
-            {/* CONTENT */}
             <VStack p={5} space={3}>
               <Text color="#43b39c" fontSize="sm">
                 {course.category}
               </Text>
 
-              {/* CLICKABLE TITLE */}
               <Pressable
                 onPress={() =>
-                  navigation.navigate("CourseDetail", { id: course._id }) // ✅ FIXED
+                  navigation.navigate("CourseDetail", { id: course._id })
                 }
               >
                 <Text fontWeight="bold" fontSize="md">
@@ -130,7 +126,6 @@ export default function CourseGrid({ isMobile }) {
         ))}
       </HStack>
 
-      {/* PAGINATION */}
       <HStack justifyContent="center" mt={4} space={2}>
         <Box bg="#43b39c" px={3} py={1} borderRadius="full">
           <Text color="white">1</Text>
