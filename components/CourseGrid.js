@@ -51,11 +51,11 @@ export default function CourseGrid({ isMobile }) {
               md: 530,
             }}
           >
-            <Pressable
-              onPress={() =>
-                navigation.navigate("CourseDetail", { id: course._id })
-              }
-            >
+           <Pressable
+  onPressIn={() =>
+    navigation.navigate("CourseDetails", { id: course._id })
+  }
+>
               <Box position="relative">
                 <Image
                   source={{ uri: `${BASE_URL}/uploads/${course.image}` }}
