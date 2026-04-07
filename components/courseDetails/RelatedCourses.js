@@ -1,19 +1,29 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Box, HStack, Image, Pressable, Text, VStack } from "native-base";
+import { useEffect, useState } from "react";
+import API from "../../services/api";
 
-import allCourses from "../../data/courses";
+// ✅ same as CourseGrid (for images)
+const BASE_URL = "https://edutest-backend-0r41.onrender.com";
 
 export default function RelatedCourses({ isMobile, currentCourseId }) {
 
-  // ✅ RANDOM + EXCLUDE CURRENT COURSE (ONLY CHANGE)
-  const getRandomCourses = (data, count = 3) => {
-    const filtered = data.filter(item => item.id !== currentCourseId);
-    const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
-  };
+  const [courses, setCourses] = useState([]);
 
-  const courses = getRandomCourses(allCourses, 3);
+  // ✅ FETCH FROM BACKEND (same pattern as CourseGrid)
+  useEffect(() => {
+    API.get("/courses")
+      .then((res) => {
+        const filtered = res.data.filter(
+          (item) => item._id !== currentCourseId
+        );
+
+        const shuffled = [...filtered].sort(() => 0.5 - Math.random());
+        setCourses(shuffled.slice(0, 3));
+      })
+      .catch((err) => console.log(err));
+  }, [currentCourseId]);
 
   return (
     <Box bg="#f8f9fb" py={12} px={isMobile ? 4 : 10}>
@@ -32,7 +42,7 @@ export default function RelatedCourses({ isMobile, currentCourseId }) {
   );
 }
 
-/* 🔹 CARD (NO UI CHANGE, ONLY NAV FIX ALREADY PRESENT) */
+/* 🔹 CARD (UI SAME, ONLY DATA SOURCE CHANGED) */
 const CourseCard = ({ item, isMobile }) => {
 
   const navigation = useNavigation();
@@ -40,7 +50,7 @@ const CourseCard = ({ item, isMobile }) => {
   return (
     <Pressable
       onPress={() =>
-        navigation.navigate("CourseDetails", { id: item.id })
+        navigation.navigate("CourseDetails", { id: item._id }) // ✅ FIXED
       }
       width={isMobile ? "100%" : "32%"}
       mb={isMobile ? 6 : 0}
@@ -54,7 +64,11 @@ const CourseCard = ({ item, isMobile }) => {
       >
 
         <Box position="relative">
-          <Image source={{ uri: item.image }} height={180} width="100%" />
+          <Image 
+            source={{ uri: `${BASE_URL}/uploads/${item.image}` }} 
+            height={180} 
+            width="100%" 
+          />
 
           <Box
             position="absolute"
