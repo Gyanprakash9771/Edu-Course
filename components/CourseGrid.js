@@ -6,11 +6,14 @@ import API from "../services/api";
 
 // ✅ FIX: define BASE_URL
 const BASE_URL = "https://edutest-backend-0r41.onrender.com";
-// const BASE_URL = "https://edutest-backend-0r41.onrender.com";
 
 export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
+
+  // ✅ PAGINATION STATE
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
 
   // ✅ FETCH FROM BACKEND
   useEffect(() => {
@@ -22,10 +25,16 @@ export default function CourseGrid({ isMobile }) {
       .catch((err) => console.log("ERROR:", err));
   }, []);
 
+  // ✅ PAGINATION LOGIC
+  const indexOfLast = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirst = indexOfLast - ITEMS_PER_PAGE;
+  const currentCourses = courses.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(courses.length / ITEMS_PER_PAGE);
+
   return (
     <Box px={{ base: 4, md: 10 }} mt={6}>
       <HStack flexWrap="wrap" justifyContent="center">
-        {courses.map((course) => (
+        {currentCourses.map((course) => (  // ✅ ONLY CHANGE HERE
           <Box
             key={course._id}
             width={{
@@ -53,10 +62,10 @@ export default function CourseGrid({ isMobile }) {
             }}
           >
            <Pressable
-  onPressIn={() =>
-    navigation.navigate("CourseDetails", { id: course._id })
-  }
->
+              onPressIn={() =>
+                navigation.navigate("CourseDetails", { id: course._id })
+              }
+            >
               <Box position="relative">
                 <Image
                   source={{ uri: `${BASE_URL}/uploads/${course.image}` }}
@@ -99,7 +108,7 @@ export default function CourseGrid({ isMobile }) {
 
               <Pressable
                 onPress={() =>
-                  navigation.navigate("CourseDetail", { id: course._id })
+                  navigation.navigate("CourseDetails", { id: course._id }) // ✅ fixed
                 }
               >
                 <Text fontWeight="bold" fontSize="md">
@@ -127,16 +136,22 @@ export default function CourseGrid({ isMobile }) {
         ))}
       </HStack>
 
+      {/* ✅ PAGINATION UI */}
       <HStack justifyContent="center" mt={4} space={2}>
-        <Box bg="#43b39c" px={3} py={1} borderRadius="full">
-          <Text color="white">1</Text>
-        </Box>
-        <Box px={3} py={1} borderRadius="full">
-          <Text>2</Text>
-        </Box>
-        <Box px={3} py={1} borderRadius="full">
-          <Text>3</Text>
-        </Box>
+        {[...Array(totalPages)].map((_, i) => (
+          <Pressable key={i} onPress={() => setCurrentPage(i + 1)}>
+            <Box
+              bg={currentPage === i + 1 ? "#43b39c" : "transparent"}
+              px={3}
+              py={1}
+              borderRadius="full"
+            >
+              <Text color={currentPage === i + 1 ? "white" : "black"}>
+                {i + 1}
+              </Text>
+            </Box>
+          </Pressable>
+        ))}
       </HStack>
     </Box>
   );
