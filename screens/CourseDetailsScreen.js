@@ -67,7 +67,10 @@ export default function CourseDetailsScreen() {
             alignItems="flex-start"
           >
             <Box w={isMobile ? "100%" : "65%"}>
-              <CourseMainContent isMobile={isMobile} />
+              <CourseMainContent 
+  isMobile={isMobile} 
+  course={course}
+/>
             </Box>
 
             <Box

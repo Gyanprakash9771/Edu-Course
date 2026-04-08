@@ -16,10 +16,12 @@ export default function CourseSidebar({ course, isMobile }) {
         <Box position="relative">
           <Image
             source={{
-              uri: "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg",
+              uri:
+                course?.thumbnail ||
+                "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg",
             }}
             alt="video"
-            height={220}   // 🔥 slightly reduced for clean look
+            height={220}
             width="100%"
           />
 
@@ -32,7 +34,7 @@ export default function CourseSidebar({ course, isMobile }) {
             bg="red.500"
             p={3}
             borderRadius="full"
-            shadow={4}   // 🔥 glow effect
+            shadow={4}
           >
             <Ionicons name="play" size={22} color="white" />
           </Box>
@@ -51,19 +53,46 @@ export default function CourseSidebar({ course, isMobile }) {
           </Button>
 
           <Text textAlign="center" fontSize="xs" color="gray.400">
-            Free access this course
+            {course?.price === 0 || course?.price === "Free"
+              ? "Free access this course"
+              : "Paid course"}
           </Text>
 
           {/* DETAILS */}
           <VStack space={3} mt={2}>
-            <DetailRow label="Price" value="Free" highlight />
-            <DetailRow label="Enrolled" value="3 Students" />
-            <DetailRow label="Duration" value="8 hours 20 minutes" />
-            <DetailRow label="Lessons" value="14 Lessons" />
-            <DetailRow label="Quiz" value="1 Quiz" />
-            <DetailRow label="Skill Level" value="Expert" />
-            <DetailRow label="Category" value={course?.category} />
-            <DetailRow label="Language" value="Spanish" />
+            <DetailRow
+              label="Price"
+              value={course?.price || "Free"}
+              highlight
+            />
+            <DetailRow
+              label="Enrolled"
+              value={`${course?.students || 0} Students`}
+            />
+            <DetailRow
+              label="Duration"
+              value={course?.duration || "N/A"}
+            />
+            <DetailRow
+              label="Lessons"
+              value={`${course?.totalLessons || 0} Lessons`}
+            />
+            <DetailRow
+              label="Quiz"
+              value={`${course?.totalQuizzes || 0} Quiz`}
+            />
+            <DetailRow
+              label="Skill Level"
+              value={course?.level || "All Levels"}
+            />
+            <DetailRow
+              label="Category"
+              value={course?.category || "General"}
+            />
+            <DetailRow
+              label="Language"
+              value={course?.language || "English"}
+            />
           </VStack>
 
           {/* SHARE */}
@@ -88,7 +117,9 @@ export default function CourseSidebar({ course, isMobile }) {
             <Ionicons name="person" size={20} color="gray" />
           </Box>
 
-          <Text fontWeight="medium">varshik</Text>
+          <Text fontWeight="medium">
+            {course?.instructor || "Unknown"}
+          </Text>
         </HStack>
       </Box>
 
@@ -99,10 +130,15 @@ export default function CourseSidebar({ course, isMobile }) {
         </Text>
 
         <HStack flexWrap="wrap">
-          <Tag text="Cybersecurity" />
-          <Tag text="Email Marketing" />
-          <Tag text="Machine Learning" />
-          <Tag text="UI/UX Design" />
+          {course?.tags?.length ? (
+            course.tags.map((tag, index) => (
+              <Tag key={index} text={tag} />
+            ))
+          ) : (
+            <>
+              <Tag text="General" />
+            </>
+          )}
         </HStack>
       </Box>
 

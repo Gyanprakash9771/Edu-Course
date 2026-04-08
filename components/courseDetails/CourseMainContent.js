@@ -3,7 +3,7 @@ import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 
-export default function CourseMainContent({ isMobile }) {
+export default function CourseMainContent({ isMobile, course }) {
 
   const [openSection, setOpenSection] = useState("section1");
 
@@ -20,7 +20,6 @@ export default function CourseMainContent({ isMobile }) {
       maxW={isMobile ? "100%" : "1200px"}
       w="100%"
       mx="auto"
-      
     >
 
       {/* ================= ABOUT COURSE ================= */}
@@ -30,11 +29,8 @@ export default function CourseMainContent({ isMobile }) {
         </Text>
 
         <Text color="gray.600" lineHeight={26}>
-          There are many variations of passages of Lorem Ipsum available,
-          but the majority have suffered alteration in some form by injected
-          humour, or randomised words which don’t look even slightly believable.
-          It is a long established fact that a reader will be distracted by
-          the readable content of a page when looking at its layout.
+          {course?.description ||
+            "No description available"}
         </Text>
       </Box>
 
@@ -44,25 +40,30 @@ export default function CourseMainContent({ isMobile }) {
           What Will You Learn?
         </Text>
 
-        {isMobile ? (
-          <VStack space={4}>
-            <LearnItem text="Practice your new skills with coding challenges (solutions included)" />
-            <LearnItem text="Get friendly and fast support in the course Q&A" />
-            <LearnItem text="Organize and structure your code using software patterns like modules" />
-            <LearnItem text="Downloadable lectures, code and design assets for all projects" />
-          </VStack>
-        ) : (
-          <HStack flexWrap="wrap" justifyContent="space-between">
-            <VStack space={4} width="48%">
-              <LearnItem text="Practice your new skills with coding challenges (solutions included)" />
-              <LearnItem text="Get friendly and fast support in the course Q&A" />
+        {course?.learn?.length ? (
+          isMobile ? (
+            <VStack space={4}>
+              {course.learn.map((item, i) => (
+                <LearnItem key={i} text={item} />
+              ))}
             </VStack>
+          ) : (
+            <HStack flexWrap="wrap" justifyContent="space-between">
+              <VStack space={4} width="48%">
+                {course.learn.slice(0, Math.ceil(course.learn.length / 2)).map((item, i) => (
+                  <LearnItem key={i} text={item} />
+                ))}
+              </VStack>
 
-            <VStack space={4} width="48%">
-              <LearnItem text="Organize and structure your code using software patterns like modules" />
-              <LearnItem text="Downloadable lectures, code and design assets for all projects" />
-            </VStack>
-          </HStack>
+              <VStack space={4} width="48%">
+                {course.learn.slice(Math.ceil(course.learn.length / 2)).map((item, i) => (
+                  <LearnItem key={i} text={item} />
+                ))}
+              </VStack>
+            </HStack>
+          )
+        ) : (
+          <Text color="gray.400">No learning content available</Text>
         )}
       </Box>
 
@@ -72,42 +73,19 @@ export default function CourseMainContent({ isMobile }) {
           Course Content
         </Text>
 
-        <CourseSection
-          title="Getting Started"
-          isOpen={openSection === "section1"}
-          onPress={() => toggleSection("section1")}
-          lessons={[
-            { title: "How to use the Course", time: "03:54" },
-            { title: "Class project 01 - Create your own brief", time: "04:33" },
-            { title: "Life Coaches in Design", time: "02:44" },
-            { title: "Make it Pretty", time: "04:05" },
-            { title: "Quiz – UX Design", type: "quiz" },
-            { title: "Understanding user friendly experience", time: "11:00" },
-          ]}
-        />
-
-        <CourseSection
-          title="What is Design?"
-          isOpen={openSection === "section2"}
-          onPress={() => toggleSection("section2")}
-          lessons={[
-            { title: "Design Process", time: "08:44" },
-            { title: "Process Problems", time: "04:00" },
-            { title: "Divergence & Convergence", time: "02:09" },
-          ]}
-        />
-
-        <CourseSection
-          title="Research (Exercises)"
-          isOpen={openSection === "section3"}
-          onPress={() => toggleSection("section3")}
-          lessons={[
-            { title: "Test Assumptions", time: "10:05" },
-            { title: "Another User Interview", time: "04:08" },
-            { title: "Competitive Analysis", time: "08:45" },
-          ]}
-        />
-
+        {course?.sections?.length ? (
+          course.sections.map((section, index) => (
+            <CourseSection
+              key={index}
+              title={section.title}
+              isOpen={openSection === `section${index}`}
+              onPress={() => toggleSection(`section${index}`)}
+              lessons={section.lessons || []}
+            />
+          ))
+        ) : (
+          <Text color="gray.400">No content available</Text>
+        )}
       </Box>
     </Box>
   );
@@ -121,7 +99,7 @@ const CourseSection = ({ title, isOpen, onPress, lessons }) => {
 
   useEffect(() => {
     Animated.timing(animatedHeight, {
-      toValue: isOpen ? contentHeight: 0,
+      toValue: isOpen ? contentHeight : 0,
       duration: 250,
       useNativeDriver: false,
     }).start();
