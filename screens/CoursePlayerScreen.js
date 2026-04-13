@@ -20,7 +20,7 @@ export default function CoursePlayerScreen() {
 
       {/* MAIN CONTENT */}
       <ScrollView>
-        <CoursePlayerHero course={course} isMobile={isMobile} />
+        <CoursePlayerHero  isMobile={isMobile} />
         <CoursePlayerContent isMobile={isMobile} />
         <FooterSection isMobile={isMobile} />
       </ScrollView>
