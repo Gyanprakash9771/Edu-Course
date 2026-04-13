@@ -1,5 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
-import { Box, Pressable, Text } from "native-base";
+import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
 import { WebView } from "react-native-webview";
@@ -12,7 +13,7 @@ export default function CoursePlayerContent({ isMobile }) {
   const [course, setCourse] = useState(null);
   const [video, setVideo] = useState("");
   const [title, setTitle] = useState("");
-  const [activeIndex, setActiveIndex] = useState(null); // ✅ NEW
+  const [activeIndex, setActiveIndex] = useState(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -23,7 +24,7 @@ export default function CoursePlayerContent({ isMobile }) {
       if (first) {
         setVideo(first.video);
         setTitle(first.title);
-        setActiveIndex("0-0"); // ✅ first active
+        setActiveIndex("0-0");
       }
     };
 
@@ -37,61 +38,87 @@ export default function CoursePlayerContent({ isMobile }) {
   return (
     <Box flexDirection={isMobile ? "column" : "row"}>
 
-      {/* LEFT SIDE */}
-      <ScrollView style={{ width: isMobile ? "100%" : "30%" }}>
+      {/* LEFT PANEL */}
+      <ScrollView
+        style={{
+          width: isMobile ? "100%" : "30%",
+          backgroundColor: "#f8f9fa",
+        }}
+      >
         <Box p={3}>
-          <Text bold mb={3}>Course Content</Text>
+          <Text bold fontSize="lg" mb={3}>
+            Course Content
+          </Text>
 
           {course.sections?.map((sec, i) => (
-            <Box key={i} mb={3}>
-              <Text bold>{sec.title}</Text>
+            <Box key={i} mb={4}>
+              {/* SECTION HEADER */}
+              <Box bg="white" p={3} borderRadius={8} shadow={1}>
+                <Text bold fontSize="md">{sec.title}</Text>
+              </Box>
 
-              {sec.lessons?.map((lec, j) => {
-                const key = `${i}-${j}`;
-                const isActive = activeIndex === key;
+              {/* LESSONS */}
+              <VStack mt={2} space={2}>
+                {sec.lessons?.map((lec, j) => {
+                  const key = `${i}-${j}`;
+                  const isActive = activeIndex === key;
 
-                return (
-                  <Pressable
-                    key={j}
-                    onPress={() => {
-                      console.log("CLICKED:", lec.title);
-
-                      setVideo(""); // ✅ FORCE REFRESH
-                      setTimeout(() => {
-                        setVideo(lec.video);
-                      }, 50);
-
-                      setTitle(lec.title);
-                      setActiveIndex(key);
-                    }}
-                  >
-                    <Box
-                      p={2}
-                      mt={2}
-                      borderWidth={1}
-                      borderRadius={6}
-                      bg={isActive ? "#43b39c" : "white"} // ✅ highlight
+                  return (
+                    <Pressable
+                      key={j}
+                      onPress={() => {
+                        setVideo("");
+                        setTimeout(() => setVideo(lec.video), 50);
+                        setTitle(lec.title);
+                        setActiveIndex(key);
+                      }}
                     >
-                      <Text color={isActive ? "white" : "black"}>
-                        ▶ {lec.title}
-                      </Text>
-                    </Box>
-                  </Pressable>
-                );
-              })}
+                      <HStack
+                        alignItems="center"
+                        space={3}
+                        p={3}
+                        borderRadius={8}
+                        bg={isActive ? "#43b39c" : "white"}
+                        borderWidth={1}
+                        borderColor={isActive ? "#43b39c" : "#e5e5e5"}
+                      >
+                        <Ionicons
+                          name="play-circle"
+                          size={22}
+                          color={isActive ? "white" : "#43b39c"}
+                        />
+
+                        <Text
+                          flex={1}
+                          color={isActive ? "white" : "black"}
+                          fontWeight={isActive ? "bold" : "normal"}
+                        >
+                          {lec.title}
+                        </Text>
+                      </HStack>
+                    </Pressable>
+                  );
+                })}
+              </VStack>
             </Box>
           ))}
         </Box>
       </ScrollView>
 
       {/* RIGHT SIDE */}
-      <Box flex={1} p={3}>
-        <Box height={250}>
+      <Box flex={1} p={isMobile ? 3 : 5}>
 
+        {/* VIDEO PLAYER */}
+        <Box
+          height={isMobile ? 220 : 400}
+          borderRadius={12}
+          overflow="hidden"
+          bg="black"
+        >
           {video ? (
             Platform.OS === "web" ? (
               <iframe
-                key={video} // ✅ FORCE RELOAD
+                key={video}
                 width="100%"
                 height="100%"
                 src={video}
@@ -101,18 +128,24 @@ export default function CoursePlayerContent({ isMobile }) {
               />
             ) : (
               <WebView
-                key={video} // ✅ FORCE RELOAD
+                key={video}
                 source={{ uri: video }}
                 style={{ flex: 1 }}
               />
             )
           ) : (
-            <Text textAlign="center">Loading video...</Text>
+            <Text color="white" textAlign="center" mt={10}>
+              Loading video...
+            </Text>
           )}
-
         </Box>
 
-        <Text mt={3} bold>{title}</Text>
+        {/* TITLE */}
+        <Box mt={4}>
+          <Text fontSize="xl" fontWeight="bold">
+            {title}
+          </Text>
+        </Box>
       </Box>
 
     </Box>
