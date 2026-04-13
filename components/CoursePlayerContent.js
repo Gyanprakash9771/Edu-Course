@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import { Box, Pressable, Text } from "native-base";
 import { useEffect, useState } from "react";
-import { Platform, ScrollView } from "react-native"; // ✅ added Platform
+import { Platform, ScrollView } from "react-native";
 import { WebView } from "react-native-webview";
 import API from "../services/api";
 
@@ -18,9 +18,10 @@ export default function CoursePlayerContent({ isMobile }) {
       const res = await API.get(`/courses/${id}`);
       setCourse(res.data);
 
-      const first = res.data.courseContent?.[0]?.lectures?.[0];
+      // ✅ FIX: correct data path
+      const first = res.data.sections?.[0]?.lessons?.[0];
       if (first) {
-        setVideo(first.videoUrl);
+        setVideo(first.video);
         setTitle(first.title);
       }
     };
@@ -40,15 +41,16 @@ export default function CoursePlayerContent({ isMobile }) {
         <Box p={3}>
           <Text bold mb={3}>Course Content</Text>
 
-          {course.courseContent.map((sec, i) => (
+          {/* ✅ FIX: use sections */}
+          {course.sections?.map((sec, i) => (
             <Box key={i} mb={3}>
-              <Text bold>{sec.section}</Text>
+              <Text bold>{sec.title}</Text>
 
-              {sec.lectures.map((lec, j) => (
+              {sec.lessons?.map((lec, j) => (
                 <Pressable
                   key={j}
                   onPress={() => {
-                    setVideo(lec.videoUrl);
+                    setVideo(lec.video);   // ✅ FIX
                     setTitle(lec.title);
                   }}
                 >
@@ -66,7 +68,7 @@ export default function CoursePlayerContent({ isMobile }) {
       <Box flex={1} p={3}>
         <Box height={250}>
 
-          {/* ✅ FIX: WEB vs MOBILE */}
+          {/* ✅ WEB vs MOBILE */}
           {Platform.OS === "web" ? (
             <iframe
               width="100%"
