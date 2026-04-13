@@ -170,14 +170,47 @@ const Lesson = ({ title, time, video }) => {
       </Pressable>
 
       {showPlayer && (
-        <Box position="absolute" top={0} left={0} right={0} bottom={0} bg="black" zIndex={999} justifyContent="center">
-          <Pressable position="absolute" top={10} right={5} onPress={() => setShowPlayer(false)}>
-            <Ionicons name="close" size={30} color="white" />
-          </Pressable>
+  <Box
+    position="absolute"
+    top={0}
+    left={0}
+    right={0}
+    bottom={0}
+    bg="black"
+    zIndex={999}
+    justifyContent="center"
+    alignItems="center"
+  >
+    {/* CLOSE BUTTON */}
+    <Pressable
+      position="absolute"
+      top={10}
+      right={5}
+      onPress={() => setShowPlayer(false)}
+    >
+      <Ionicons name="close" size={30} color="white" />
+    </Pressable>
 
-          <WebView source={{ uri: video }} style={{ width: "100%", height: 300 }} />
-        </Box>
-      )}
+    {/* 🔥 FIX: WEB vs MOBILE */}
+    {typeof window !== "undefined" ? (
+      // ✅ WEB (Vercel / Browser)
+      <iframe
+        width="100%"
+        height="300"
+        src={video}
+        title="video"
+        allowFullScreen
+        style={{ border: "none" }}
+      />
+    ) : (
+      // ✅ MOBILE (Android / iOS)
+      <WebView
+        source={{ uri: video }}
+        style={{ width: "100%", height: 300 }}
+      />
+    )}
+  </Box>
+)}
     </>
   );
 };
