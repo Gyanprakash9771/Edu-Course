@@ -102,9 +102,9 @@ export default function CourseGrid({ isMobile }) {
             </Pressable>
 
             <VStack p={5} space={3}>
-              <Text color="#43b39c" fontSize="sm">
-                {course.category}
-              </Text>
+             <Text color="#43b39c" fontSize="sm">
+  {course.category?.name || course.category}
+</Text>
 
               <Pressable
                 onPress={() =>
