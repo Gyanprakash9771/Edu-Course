@@ -3,7 +3,7 @@ import { Box, Pressable, Text } from "native-base";
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { WebView } from "react-native-webview";
-import API from "../services/apiService";
+import API from "../services/api";
 
 export default function CoursePlayerContent({ isMobile }) {
   const route = useRoute();
