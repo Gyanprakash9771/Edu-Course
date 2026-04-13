@@ -1,9 +1,9 @@
-import { Box, Text } from "native-base";
+import { Box, Text, VStack } from "native-base"; // ✅ added VStack
 import { ImageBackground } from "react-native";
 
 export default function CoursePlayerHero({ isMobile }) {
   return (
-       <Box height={isMobile ? 200 : 450} width="100%">
+    <Box height={isMobile ? 200 : 450} width="100%">
       
       <ImageBackground
         source={{
@@ -13,7 +13,7 @@ export default function CoursePlayerHero({ isMobile }) {
       >
         {/* ✅ FIXED OVERLAY */}
         <Box
-          pointerEvents="none"   // 🔥 IMPORTANT FIX
+          pointerEvents="none"
           position="absolute"
           top={0}
           left={0}
