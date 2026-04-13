@@ -150,9 +150,11 @@ const Lesson = ({ title, time, video, courseId }) => {
           alert("Video not available ❌");
           return;
         }
+        console.log("CLICKED ✅", courseId);
 
         // ✅ NAVIGATION
         navigation.navigate("CoursePlayer", {
+          
           id: courseId,
           video: video,
           title: title,

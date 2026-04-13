@@ -22,6 +22,7 @@ const linking = {
       Home: "",
       CourseScreen: "courses",
       CourseDetails: "course-details/:id",
+      CoursePlayer: "course-player/:id",
     },
   },
 };
