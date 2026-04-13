@@ -109,6 +109,8 @@ export default function CoursePlayerContent({ isMobile }) {
       <Box
         style={{ width: isMobile ? "100%" : "70%" }} // ✅ FIXED
         p={isMobile ? 3 : 5}
+        mt={isMobile ? 0:100}
+        mb={isMobile ? 0:100}
       >
 
         {/* VIDEO PLAYER */}
