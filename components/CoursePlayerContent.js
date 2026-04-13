@@ -14,6 +14,7 @@ export default function CoursePlayerContent({ isMobile }) {
   const [video, setVideo] = useState("");
   const [title, setTitle] = useState("");
   const [activeIndex, setActiveIndex] = useState(null);
+  const [completed, setCompleted] = useState([]); // ✅ NEW
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -35,15 +36,49 @@ export default function CoursePlayerContent({ isMobile }) {
     return <Text mt={5} textAlign="center">Loading...</Text>;
   }
 
+  // ✅ TOTAL PROGRESS
+  const totalLessons =
+    course.sections?.reduce(
+      (acc, sec) => acc + (sec.lessons?.length || 0),
+      0
+    ) || 0;
+
+  const progressPercent = totalLessons
+    ? Math.round((completed.length / totalLessons) * 100)
+    : 0;
+
+  // ✅ FLATTEN LESSONS (for next/prev)
+  const flatLessons = course.sections.flatMap((sec, i) =>
+    sec.lessons.map((lec, j) => ({
+      ...lec,
+      key: `${i}-${j}`,
+    }))
+  );
+
+  const currentIndex = flatLessons.findIndex(
+    (l) => l.key === activeIndex
+  );
+
+  const goToLesson = (lesson) => {
+    setVideo("");
+    setTimeout(() => setVideo(lesson.video), 50);
+    setTitle(lesson.title);
+    setActiveIndex(lesson.key);
+
+    if (!completed.includes(lesson.key)) {
+      setCompleted([...completed, lesson.key]);
+    }
+  };
+
   return (
     <Box flexDirection={isMobile ? "column" : "row"}>
 
-      {/* LEFT PANEL (30%) */}
+      {/* LEFT PANEL */}
       <ScrollView
         style={{
-          width: isMobile ? "100%" : "30%", // ✅ FIXED
+          width: isMobile ? "100%" : "30%",
           backgroundColor: "#f8f9fa",
-          borderRightWidth: isMobile ? 0 : 1, // ✅ CLEAN LOOK
+          borderRightWidth: isMobile ? 0 : 1,
           borderColor: "#e5e5e5",
         }}
       >
@@ -62,16 +97,14 @@ export default function CoursePlayerContent({ isMobile }) {
                 {sec.lessons?.map((lec, j) => {
                   const key = `${i}-${j}`;
                   const isActive = activeIndex === key;
+                  const isDone = completed.includes(key);
 
                   return (
                     <Pressable
                       key={j}
-                      onPress={() => {
-                        setVideo("");
-                        setTimeout(() => setVideo(lec.video), 50);
-                        setTitle(lec.title);
-                        setActiveIndex(key);
-                      }}
+                      onPress={() =>
+                        goToLesson({ ...lec, key })
+                      }
                     >
                       <HStack
                         alignItems="center"
@@ -83,9 +116,19 @@ export default function CoursePlayerContent({ isMobile }) {
                         borderColor={isActive ? "#43b39c" : "#e5e5e5"}
                       >
                         <Ionicons
-                          name="play-circle"
+                          name={
+                            isDone
+                              ? "checkmark-circle"
+                              : "play-circle"
+                          }
                           size={22}
-                          color={isActive ? "white" : "#43b39c"}
+                          color={
+                            isDone
+                              ? "#22c55e"
+                              : isActive
+                              ? "white"
+                              : "#43b39c"
+                          }
                         />
 
                         <Text
@@ -105,51 +148,57 @@ export default function CoursePlayerContent({ isMobile }) {
         </Box>
       </ScrollView>
 
-      {/* RIGHT SIDE (70%) */}
+      {/* RIGHT SIDE */}
       <Box
-        style={{ width: isMobile ? "100%" : "70%" }} // ✅ FIXED
+        style={{ width: isMobile ? "100%" : "70%" }}
         p={isMobile ? 3 : 5}
-       
       >
 
-        {/* VIDEO PLAYER */}
-<Box
-  height={isMobile ? 250 : 500}
-  borderRadius={12}
-  overflow="hidden"
-  bg="black"
->
-  {video ? (
-    Platform.OS === "web" ? (
-      <iframe
-        key={video}
-        width="100%"
-        height="100%"
-        src={`${video}?autoplay=1&modestbranding=1&rel=0`}
-        title="video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        style={{ border: "none" }}
-      />
-    ) : (
-      <WebView
-        key={video}
-        source={{
-          uri: `${video}?autoplay=1&modestbranding=1&rel=0`,
-        }}
-        javaScriptEnabled
-        domStorageEnabled
-        allowsFullscreenVideo
-        mediaPlaybackRequiresUserAction={false}
-        style={{ flex: 1 }}
-      />
-    )
-  ) : (
-    <Text color="white" textAlign="center" mt={10}>
-      Loading video...
-    </Text>
-  )}
-</Box>
+        {/* ✅ PROGRESS BAR */}
+        <Box mb={4}>
+          <Text bold mb={1}>
+            Progress: {progressPercent}%
+          </Text>
+          <Box bg="#e5e5e5" height={3} borderRadius={5}>
+            <Box
+              bg="#43b39c"
+              height={3}
+              borderRadius={5}
+              width={`${progressPercent}%`}
+            />
+          </Box>
+        </Box>
+
+        {/* VIDEO */}
+        <Box
+          height={isMobile ? 250 : 500}
+          borderRadius={12}
+          overflow="hidden"
+          bg="black"
+        >
+          {video ? (
+            Platform.OS === "web" ? (
+              <iframe
+                key={video}
+                width="100%"
+                height="100%"
+                src={`${video}?autoplay=1&rel=0`}
+                allowFullScreen
+                style={{ border: "none" }}
+              />
+            ) : (
+              <WebView
+                key={video}
+                source={{ uri: video }}
+                style={{ flex: 1 }}
+              />
+            )
+          ) : (
+            <Text color="white" textAlign="center" mt={10}>
+              Loading video...
+            </Text>
+          )}
+        </Box>
 
         {/* TITLE */}
         <Box mt={4}>
@@ -157,17 +206,28 @@ export default function CoursePlayerContent({ isMobile }) {
             {title}
           </Text>
         </Box>
-      </Box>
-      <HStack justifyContent="space-between" mt={4}>
-  <Pressable>
-    <Text color="#43b39c">⬅ Previous</Text>
-  </Pressable>
 
-  <Pressable>
-    <Text color="#43b39c">Next ➡</Text>
-  </Pressable>
-</HStack>
+        {/* ✅ NEXT / PREV */}
+        <HStack justifyContent="space-between" mt={4}>
+          <Pressable
+            onPress={() =>
+              currentIndex > 0 &&
+              goToLesson(flatLessons[currentIndex - 1])
+            }
+          >
+            <Text color="#43b39c">⬅ Previous</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() =>
+              currentIndex < flatLessons.length - 1 &&
+              goToLesson(flatLessons[currentIndex + 1])
+            }
+          >
+            <Text color="#43b39c">Next ➡</Text>
+          </Pressable>
+        </HStack>
+      </Box>
     </Box>
-    
   );
 }
