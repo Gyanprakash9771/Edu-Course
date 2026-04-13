@@ -50,7 +50,7 @@ const CourseCard = ({ item, isMobile }) => {
   return (
     <Pressable
       onPress={() =>
-        navigation.navigate("CourseDetails", { id: item._id }) // ✅ FIXED
+        navigation.navigate("CourseDetails", { id: item._id })
       }
       width={isMobile ? "100%" : "32%"}
       mb={isMobile ? 6 : 0}
@@ -80,7 +80,7 @@ const CourseCard = ({ item, isMobile }) => {
             borderRadius="md"
           >
             <Text color="white" fontSize="xs">
-              {item.category}
+              {item?.category?.name || item?.category || "General"}  {/* ✅ FIX */}
             </Text>
           </Box>
 

@@ -42,7 +42,11 @@ export default function CourseHero({ course, isMobile }) {
           >
             {course?.description
               ? course.description
-              : `Learn everything about ${course?.category}`}
+              : `Learn everything about ${
+    typeof course?.category === "object"
+      ? course.category?.name
+      : course?.category
+  }`}
           </Text>
 
           {/* ⭐ META INFO */}

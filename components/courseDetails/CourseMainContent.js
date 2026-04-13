@@ -29,8 +29,7 @@ export default function CourseMainContent({ isMobile, course }) {
         </Text>
 
         <Text color="gray.600" lineHeight={26}>
-          {course?.description ||
-            "No description available"}
+          {course?.description || "No description available"}
         </Text>
       </Box>
 
@@ -40,25 +39,29 @@ export default function CourseMainContent({ isMobile, course }) {
           What Will You Learn?
         </Text>
 
-        {course?.learn?.length ? (
+        {course?.whatYouWillLearn?.length ? (
           isMobile ? (
             <VStack space={4}>
-              {course.learn.map((item, i) => (
+              {course.whatYouWillLearn.map((item, i) => (
                 <LearnItem key={i} text={item} />
               ))}
             </VStack>
           ) : (
             <HStack flexWrap="wrap" justifyContent="space-between">
               <VStack space={4} width="48%">
-                {course.learn.slice(0, Math.ceil(course.learn.length / 2)).map((item, i) => (
-                  <LearnItem key={i} text={item} />
-                ))}
+                {course.whatYouWillLearn
+                  .slice(0, Math.ceil(course.whatYouWillLearn.length / 2))
+                  .map((item, i) => (
+                    <LearnItem key={i} text={item} />
+                  ))}
               </VStack>
 
               <VStack space={4} width="48%">
-                {course.learn.slice(Math.ceil(course.learn.length / 2)).map((item, i) => (
-                  <LearnItem key={i} text={item} />
-                ))}
+                {course.whatYouWillLearn
+                  .slice(Math.ceil(course.whatYouWillLearn.length / 2))
+                  .map((item, i) => (
+                    <LearnItem key={i} text={item} />
+                  ))}
               </VStack>
             </HStack>
           )
@@ -73,14 +76,14 @@ export default function CourseMainContent({ isMobile, course }) {
           Course Content
         </Text>
 
-        {course?.sections?.length ? (
-          course.sections.map((section, index) => (
+        {course?.courseContent?.length ? (
+          course.courseContent.map((section, index) => (
             <CourseSection
               key={index}
-              title={section.title}
+              title={section.sectionTitle}
               isOpen={openSection === `section${index}`}
               onPress={() => toggleSection(`section${index}`)}
-              lessons={section.lessons || []}
+              lessons={section.lectures || []}
             />
           ))
         ) : (
@@ -164,7 +167,7 @@ const LearnItem = ({ text }) => (
 );
 
 /* 🔹 LESSON ITEM */
-const Lesson = ({ title, time, type = "video" }) => (
+const Lesson = ({ title, duration, type = "video" }) => (
   <HStack
     justifyContent="space-between"
     alignItems="center"
@@ -188,9 +191,9 @@ const Lesson = ({ title, time, type = "video" }) => (
     </HStack>
 
     <HStack alignItems="center" space={3}>
-      {time && (
+      {duration && (
         <Text color="gray.400" fontSize="sm">
-          {time}
+          {duration}
         </Text>
       )}
       <Ionicons name="lock-closed-outline" size={18} color="gray" />

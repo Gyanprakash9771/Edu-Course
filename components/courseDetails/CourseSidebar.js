@@ -67,7 +67,7 @@ export default function CourseSidebar({ course, isMobile }) {
             />
             <DetailRow
               label="Enrolled"
-              value={`${course?.students || 0} Students`}
+              value={`${course?.enrolled || 0} Students`}  
             />
             <DetailRow
               label="Duration"
@@ -75,7 +75,7 @@ export default function CourseSidebar({ course, isMobile }) {
             />
             <DetailRow
               label="Lessons"
-              value={`${course?.totalLessons || 0} Lessons`}
+              value={`${course?.lessons || 0} Lessons`}   
             />
             <DetailRow
               label="Quiz"
@@ -87,7 +87,9 @@ export default function CourseSidebar({ course, isMobile }) {
             />
             <DetailRow
               label="Category"
-              value={course?.category || "General"}
+              value={
+                course?.category?.name || course?.category || "General"
+              }   
             />
             <DetailRow
               label="Language"
