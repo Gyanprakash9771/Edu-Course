@@ -114,36 +114,43 @@ export default function CoursePlayerContent({ isMobile }) {
       >
 
         {/* VIDEO PLAYER */}
-        <Box
-          height={isMobile ? 250 : 500} // ✅ BIGGER VIDEO
-          borderRadius={12}
-          overflow="hidden"
-          bg="black"
-        >
-          {video ? (
-            Platform.OS === "web" ? (
-              <iframe
-                key={video}
-                width="100%"
-                height="100%"
-                src={video}
-                title="video"
-                allowFullScreen
-                style={{ border: "none" }}
-              />
-            ) : (
-              <WebView
-                key={video}
-                source={{ uri: video }}
-                style={{ flex: 1 }}
-              />
-            )
-          ) : (
-            <Text color="white" textAlign="center" mt={10}>
-              Loading video...
-            </Text>
-          )}
-        </Box>
+<Box
+  height={isMobile ? 250 : 500}
+  borderRadius={12}
+  overflow="hidden"
+  bg="black"
+>
+  {video ? (
+    Platform.OS === "web" ? (
+      <iframe
+        key={video}
+        width="100%"
+        height="100%"
+        src={`${video}?autoplay=1&modestbranding=1&rel=0`}
+        title="video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        style={{ border: "none" }}
+      />
+    ) : (
+      <WebView
+        key={video}
+        source={{
+          uri: `${video}?autoplay=1&modestbranding=1&rel=0`,
+        }}
+        javaScriptEnabled
+        domStorageEnabled
+        allowsFullscreenVideo
+        mediaPlaybackRequiresUserAction={false}
+        style={{ flex: 1 }}
+      />
+    )
+  ) : (
+    <Text color="white" textAlign="center" mt={10}>
+      Loading video...
+    </Text>
+  )}
+</Box>
 
         {/* TITLE */}
         <Box mt={4}>
