@@ -94,7 +94,7 @@ export default function CourseMainContent({ isMobile, course }) {
   );
 }
 
-/* 🔹 SECTION (ANIMATED HEIGHT FIX) */
+/* 🔹 SECTION */
 const CourseSection = ({ title, isOpen, onPress, lessons }) => {
 
   const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -166,37 +166,45 @@ const LearnItem = ({ text }) => (
   </HStack>
 );
 
-/* 🔹 LESSON ITEM */
-const Lesson = ({ title, duration, type = "video" }) => (
-  <HStack
-    justifyContent="space-between"
-    alignItems="center"
-    px={4}
-    py={4}
-    borderTopWidth={1}
-    borderColor="gray.100"
-    _hover={{ bg: "gray.50" }}
-    w="100%"
+/* 🔥 UPDATED LESSON (CLICKABLE + VIDEO) */
+const Lesson = ({ title, duration, video, type = "video" }) => (
+  <Pressable
+    onPress={() => {
+      if (video) {
+        console.log("PLAY VIDEO:", video);
+      }
+    }}
   >
-    <HStack alignItems="center" space={3} flex={1}>
-      {type === "quiz" ? (
-        <Ionicons name="help-circle-outline" size={20} color="#f59e0b" />
-      ) : (
-        <Ionicons name="play-circle-outline" size={20} color="#43b39c" />
-      )}
+    <HStack
+      justifyContent="space-between"
+      alignItems="center"
+      px={4}
+      py={4}
+      borderTopWidth={1}
+      borderColor="gray.100"
+      _hover={{ bg: "gray.50" }}
+      w="100%"
+    >
+      <HStack alignItems="center" space={3} flex={1}>
+        {type === "quiz" ? (
+          <Ionicons name="help-circle-outline" size={20} color="#f59e0b" />
+        ) : (
+          <Ionicons name="play-circle-outline" size={20} color="#43b39c" />
+        )}
 
-      <Text color="gray.700" flex={1} fontSize="md">
-        {title}
-      </Text>
-    </HStack>
-
-    <HStack alignItems="center" space={3}>
-      {duration && (
-        <Text color="gray.400" fontSize="sm">
-          {duration}
+        <Text color="gray.700" flex={1} fontSize="md">
+          {title}
         </Text>
-      )}
-      <Ionicons name="lock-closed-outline" size={18} color="gray" />
+      </HStack>
+
+      <HStack alignItems="center" space={3}>
+        {duration && (
+          <Text color="gray.400" fontSize="sm">
+            {duration}
+          </Text>
+        )}
+        <Ionicons name="lock-closed-outline" size={18} color="gray" />
+      </HStack>
     </HStack>
-  </HStack>
+  </Pressable>
 );
