@@ -2,6 +2,7 @@ import { Box } from "native-base";
 import { ScrollView, useWindowDimensions } from "react-native";
 
 import CoursePlayerContent from "../components/CoursePlayerContent";
+import CoursePlayerHero from "../components/CoursePlayerHero";
 import FooterSection from "../components/FooterSection";
 import MainNavbar from "../components/MainNavbar";
 import Navbar from "../components/Navbar";
@@ -19,6 +20,7 @@ export default function CoursePlayerScreen() {
 
       {/* MAIN CONTENT */}
       <ScrollView>
+        <CoursePlayerHero course={course} isMobile={isMobile} />
         <CoursePlayerContent isMobile={isMobile} />
         <FooterSection isMobile={isMobile} />
       </ScrollView>
