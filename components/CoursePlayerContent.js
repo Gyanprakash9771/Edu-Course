@@ -1,7 +1,7 @@
 import { useRoute } from "@react-navigation/native";
 import { Box, Pressable, Text } from "native-base";
 import { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import { Platform, ScrollView } from "react-native"; // ✅ added Platform
 import { WebView } from "react-native-webview";
 import API from "../services/api";
 
@@ -65,7 +65,24 @@ export default function CoursePlayerContent({ isMobile }) {
       {/* RIGHT SIDE */}
       <Box flex={1} p={3}>
         <Box height={250}>
-          <WebView source={{ uri: video }} />
+
+          {/* ✅ FIX: WEB vs MOBILE */}
+          {Platform.OS === "web" ? (
+            <iframe
+              width="100%"
+              height="100%"
+              src={video}
+              title="video"
+              allowFullScreen
+              style={{ border: "none" }}
+            />
+          ) : (
+            <WebView
+              source={{ uri: video }}
+              style={{ flex: 1 }}
+            />
+          )}
+
         </Box>
 
         <Text mt={3} bold>{title}</Text>
