@@ -41,7 +41,7 @@ export default function CoursePlayerContent({ isMobile }) {
       {/* LEFT PANEL */}
       <ScrollView
         style={{
-          width: isMobile ? "100%" : "30%",
+          width: isMobile ? "100%" : "10%",
           backgroundColor: "#f8f9fa",
         }}
       >
