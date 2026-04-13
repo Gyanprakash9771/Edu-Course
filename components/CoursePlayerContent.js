@@ -158,7 +158,16 @@ export default function CoursePlayerContent({ isMobile }) {
           </Text>
         </Box>
       </Box>
+      <HStack justifyContent="space-between" mt={4}>
+  <Pressable>
+    <Text color="#43b39c">⬅ Previous</Text>
+  </Pressable>
 
+  <Pressable>
+    <Text color="#43b39c">Next ➡</Text>
+  </Pressable>
+</HStack>
     </Box>
+    
   );
 }
