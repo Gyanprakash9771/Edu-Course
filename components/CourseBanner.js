@@ -4,14 +4,14 @@ import { ImageBackground } from "react-native";
 export default function CourseBanner({ isMobile }) {
   return (
     <Box height={isMobile ? 200 : 450} width="100%">
-      
+
       <ImageBackground
         source={{
           uri: "https://edutest.gpcfindia.org/wp-content/uploads/2026/03/HED97HQ.jpeg",
         }}
         style={{ flex: 1, justifyContent: "center" }}
       >
-        {/* ✅ FIXED OVERLAY */}
+        
         <Box
           pointerEvents="none"   // 🔥 IMPORTANT FIX
           position="absolute"

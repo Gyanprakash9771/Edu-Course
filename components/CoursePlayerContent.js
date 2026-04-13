@@ -12,17 +12,18 @@ export default function CoursePlayerContent({ isMobile }) {
   const [course, setCourse] = useState(null);
   const [video, setVideo] = useState("");
   const [title, setTitle] = useState("");
+  const [activeIndex, setActiveIndex] = useState(null); // ✅ NEW
 
   useEffect(() => {
     const fetchCourse = async () => {
       const res = await API.get(`/courses/${id}`);
       setCourse(res.data);
 
-      // ✅ FIX: correct data path
       const first = res.data.sections?.[0]?.lessons?.[0];
       if (first) {
         setVideo(first.video);
         setTitle(first.title);
+        setActiveIndex("0-0"); // ✅ first active
       }
     };
 
@@ -41,24 +42,43 @@ export default function CoursePlayerContent({ isMobile }) {
         <Box p={3}>
           <Text bold mb={3}>Course Content</Text>
 
-          {/* ✅ FIX: use sections */}
           {course.sections?.map((sec, i) => (
             <Box key={i} mb={3}>
               <Text bold>{sec.title}</Text>
 
-              {sec.lessons?.map((lec, j) => (
-                <Pressable
-                  key={j}
-                  onPress={() => {
-                    setVideo(lec.video);   // ✅ FIX
-                    setTitle(lec.title);
-                  }}
-                >
-                  <Box p={2} borderWidth={1} mt={2}>
-                    <Text>▶ {lec.title}</Text>
-                  </Box>
-                </Pressable>
-              ))}
+              {sec.lessons?.map((lec, j) => {
+                const key = `${i}-${j}`;
+                const isActive = activeIndex === key;
+
+                return (
+                  <Pressable
+                    key={j}
+                    onPress={() => {
+                      console.log("CLICKED:", lec.title);
+
+                      setVideo(""); // ✅ FORCE REFRESH
+                      setTimeout(() => {
+                        setVideo(lec.video);
+                      }, 50);
+
+                      setTitle(lec.title);
+                      setActiveIndex(key);
+                    }}
+                  >
+                    <Box
+                      p={2}
+                      mt={2}
+                      borderWidth={1}
+                      borderRadius={6}
+                      bg={isActive ? "#43b39c" : "white"} // ✅ highlight
+                    >
+                      <Text color={isActive ? "white" : "black"}>
+                        ▶ {lec.title}
+                      </Text>
+                    </Box>
+                  </Pressable>
+                );
+              })}
             </Box>
           ))}
         </Box>
@@ -68,21 +88,26 @@ export default function CoursePlayerContent({ isMobile }) {
       <Box flex={1} p={3}>
         <Box height={250}>
 
-          {/* ✅ WEB vs MOBILE */}
-          {Platform.OS === "web" ? (
-            <iframe
-              width="100%"
-              height="100%"
-              src={video}
-              title="video"
-              allowFullScreen
-              style={{ border: "none" }}
-            />
+          {video ? (
+            Platform.OS === "web" ? (
+              <iframe
+                key={video} // ✅ FORCE RELOAD
+                width="100%"
+                height="100%"
+                src={video}
+                title="video"
+                allowFullScreen
+                style={{ border: "none" }}
+              />
+            ) : (
+              <WebView
+                key={video} // ✅ FORCE RELOAD
+                source={{ uri: video }}
+                style={{ flex: 1 }}
+              />
+            )
           ) : (
-            <WebView
-              source={{ uri: video }}
-              style={{ flex: 1 }}
-            />
+            <Text textAlign="center">Loading video...</Text>
           )}
 
         </Box>

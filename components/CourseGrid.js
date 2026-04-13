@@ -11,11 +11,11 @@ export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
 
-  // ✅ PAGINATION STATE
+  
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6;
 
-  // ✅ FETCH FROM BACKEND
+  
   useEffect(() => {
     API.get("/courses")
       .then((res) => {
@@ -25,7 +25,7 @@ export default function CourseGrid({ isMobile }) {
       .catch((err) => console.log("ERROR:", err));
   }, []);
 
-  // ✅ PAGINATION LOGIC
+  
   const indexOfLast = currentPage * ITEMS_PER_PAGE;
   const indexOfFirst = indexOfLast - ITEMS_PER_PAGE;
   const currentCourses = courses.slice(indexOfFirst, indexOfLast);
@@ -34,7 +34,7 @@ export default function CourseGrid({ isMobile }) {
   return (
     <Box px={{ base: 4, md: 10 }} mt={6}>
       <HStack flexWrap="wrap" justifyContent="center">
-        {currentCourses.map((course) => (  // ✅ ONLY CHANGE HERE
+        {currentCourses.map((course) => (  
           <Box
             key={course._id}
             width={{
@@ -61,7 +61,7 @@ export default function CourseGrid({ isMobile }) {
               md: 530,
             }}
           >
-           <Pressable
+            <Pressable
               onPressIn={() =>
                 navigation.navigate("CourseDetails", { id: course._id })
               }
@@ -102,9 +102,9 @@ export default function CourseGrid({ isMobile }) {
             </Pressable>
 
             <VStack p={5} space={3}>
-             <Text color="#43b39c" fontSize="sm">
-  {course.category?.name || course.category}
-</Text>
+              <Text color="#43b39c" fontSize="sm">
+                {course.category?.name || course.category}
+              </Text>
 
               <Pressable
                 onPress={() =>
@@ -136,7 +136,7 @@ export default function CourseGrid({ isMobile }) {
         ))}
       </HStack>
 
-      {/* ✅ PAGINATION UI */}
+      
       <HStack justifyContent="center" mt={4} space={2}>
         {[...Array(totalPages)].map((_, i) => (
           <Pressable key={i} onPress={() => setCurrentPage(i + 1)}>

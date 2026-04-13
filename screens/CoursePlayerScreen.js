@@ -1,9 +1,9 @@
 import { Box } from "native-base";
 import { ScrollView, useWindowDimensions } from "react-native";
 
+import CourseFooter from "../components/CourseFooter";
 import CoursePlayerContent from "../components/CoursePlayerContent";
 import CoursePlayerHero from "../components/CoursePlayerHero";
-import FooterSection from "../components/FooterSection";
 import MainNavbar from "../components/MainNavbar";
 import Navbar from "../components/Navbar";
 
@@ -14,15 +14,15 @@ export default function CoursePlayerScreen() {
   return (
     <Box flex={1}>
 
-      {/* TOP NAV */}
+      
       <Navbar />
       <MainNavbar isMobile={isMobile} />
 
-      {/* MAIN CONTENT */}
+      
       <ScrollView>
         <CoursePlayerHero  isMobile={isMobile} />
         <CoursePlayerContent isMobile={isMobile} />
-        <FooterSection isMobile={isMobile} />
+        <CourseFooter/>
       </ScrollView>
 
     </Box>
