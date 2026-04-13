@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NativeBaseProvider } from "native-base";
+import { Text } from "react-native";
 
 import * as Linking from "expo-linking";
 import CourseDetailsScreen from "./screens/CourseDetailsScreen";
