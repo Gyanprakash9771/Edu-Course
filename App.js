@@ -3,8 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NativeBaseProvider } from "native-base";
 
 import * as Linking from "expo-linking";
-import CoursePlayerScreen from "../screens/CoursePlayerScreen";
 import CourseDetailsScreen from "./screens/CourseDetailsScreen";
+import CoursePlayerScreen from "./screens/CoursePlayerScreen";
 import CourseScreen from "./screens/CourseScreen";
 import HomeScreen from "./screens/HomeScreen";
 
@@ -34,10 +34,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="CourseScreen" component={CourseScreen} />
           <Stack.Screen name="CourseDetails" component={CourseDetailsScreen} />
-          <Stack.Screen
-  name="CoursePlayer"
-  component={CoursePlayerScreen}
-/>
+          <Stack.Screen name="CoursePlayer" component={CoursePlayerScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
