@@ -1,4 +1,5 @@
 import { Box, Text } from "native-base";
+import { ImageBackground } from "react-native";
 
 export default function CoursePlayerHero({ isMobile }) {
   return (
