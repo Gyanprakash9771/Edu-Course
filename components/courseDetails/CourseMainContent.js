@@ -77,14 +77,14 @@ export default function CourseMainContent({ isMobile, course }) {
           Course Content
         </Text>
 
-        {course?.courseContent?.length ? (
-          course.courseContent.map((section, index) => (
+        {course?.sections?.length ? (
+          course.sections.map((section, index) => (
             <CourseSection
               key={index}
-              title={section.sectionTitle}
+              title={section.title}
               isOpen={openSection === `section${index}`}
               onPress={() => toggleSection(`section${index}`)}
-              lessons={section.lectures || []}
+              lessons={section.lessons || []}
             />
           ))
         ) : (
@@ -137,8 +137,8 @@ const LearnItem = ({ text }) => (
   </HStack>
 );
 
-/* 🔥 FIXED LESSON */
-const Lesson = ({ title, duration, video }) => {
+/* 🔥 FINAL LESSON */
+const Lesson = ({ title, time, video }) => {
 
   const [showPlayer, setShowPlayer] = useState(false);
 
@@ -146,7 +146,7 @@ const Lesson = ({ title, duration, video }) => {
     <>
       <Pressable
         onPress={() => {
-          console.log("VIDEO:", video); // 🔥 DEBUG
+          console.log("VIDEO:", video);
 
           if (!video) {
             alert("Video not available ❌");
@@ -163,7 +163,7 @@ const Lesson = ({ title, duration, video }) => {
           </HStack>
 
           <HStack alignItems="center" space={3}>
-            {duration && <Text fontSize="sm">{duration}</Text>}
+            {time && <Text fontSize="sm">{time}</Text>}
             <Ionicons name="play-circle" size={18} color="#43b39c" />
           </HStack>
         </HStack>
