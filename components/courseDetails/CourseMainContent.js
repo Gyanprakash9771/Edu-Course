@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
+import { WebView } from "react-native-webview"; // 🔥 ADD THIS
 
 export default function CourseMainContent({ isMobile, course }) {
 
@@ -166,45 +167,76 @@ const LearnItem = ({ text }) => (
   </HStack>
 );
 
-/* 🔥 UPDATED LESSON (CLICKABLE + VIDEO) */
-const Lesson = ({ title, duration, video, type = "video" }) => (
-  <Pressable
-    onPress={() => {
-      if (video) {
-        console.log("PLAY VIDEO:", video);
-      }
-    }}
-  >
-    <HStack
-      justifyContent="space-between"
-      alignItems="center"
-      px={4}
-      py={4}
-      borderTopWidth={1}
-      borderColor="gray.100"
-      _hover={{ bg: "gray.50" }}
-      w="100%"
-    >
-      <HStack alignItems="center" space={3} flex={1}>
-        {type === "quiz" ? (
-          <Ionicons name="help-circle-outline" size={20} color="#f59e0b" />
-        ) : (
-          <Ionicons name="play-circle-outline" size={20} color="#43b39c" />
-        )}
+/* 🔥 FINAL LESSON WITH VIDEO PLAYER */
+const Lesson = ({ title, duration, video, type = "video" }) => {
 
-        <Text color="gray.700" flex={1} fontSize="md">
-          {title}
-        </Text>
-      </HStack>
+  const [showPlayer, setShowPlayer] = useState(false);
 
-      <HStack alignItems="center" space={3}>
-        {duration && (
-          <Text color="gray.400" fontSize="sm">
-            {duration}
-          </Text>
-        )}
-        <Ionicons name="lock-closed-outline" size={18} color="gray" />
-      </HStack>
-    </HStack>
-  </Pressable>
-);
+  return (
+    <>
+      <Pressable onPress={() => video && setShowPlayer(true)}>
+        <HStack
+          justifyContent="space-between"
+          alignItems="center"
+          px={4}
+          py={4}
+          borderTopWidth={1}
+          borderColor="gray.100"
+          _hover={{ bg: "gray.50" }}
+          w="100%"
+        >
+          <HStack alignItems="center" space={3} flex={1}>
+            {type === "quiz" ? (
+              <Ionicons name="help-circle-outline" size={20} color="#f59e0b" />
+            ) : (
+              <Ionicons name="play-circle-outline" size={20} color="#43b39c" />
+            )}
+
+            <Text color="gray.700" flex={1} fontSize="md">
+              {title}
+            </Text>
+          </HStack>
+
+          <HStack alignItems="center" space={3}>
+            {duration && (
+              <Text color="gray.400" fontSize="sm">
+                {duration}
+              </Text>
+            )}
+            <Ionicons name="play-circle" size={18} color="#43b39c" />
+          </HStack>
+        </HStack>
+      </Pressable>
+
+      {/* 🔥 VIDEO PLAYER */}
+      {showPlayer && video && (
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="black"
+          zIndex={999}
+          justifyContent="center"
+          alignItems="center"
+        >
+          {/* CLOSE */}
+          <Pressable
+            position="absolute"
+            top={10}
+            right={5}
+            onPress={() => setShowPlayer(false)}
+          >
+            <Ionicons name="close" size={30} color="white" />
+          </Pressable>
+
+          <WebView
+            source={{ uri: video }}
+            style={{ width: "100%", height: 300 }}
+          />
+        </Box>
+      )}
+    </>
+  );
+};
