@@ -38,11 +38,13 @@ export default function CoursePlayerContent({ isMobile }) {
   return (
     <Box flexDirection={isMobile ? "column" : "row"}>
 
-      {/* LEFT PANEL */}
+      {/* LEFT PANEL (30%) */}
       <ScrollView
         style={{
-          width: isMobile ? "100%" : "10%",
+          width: isMobile ? "100%" : "30%", // ✅ FIXED
           backgroundColor: "#f8f9fa",
+          borderRightWidth: isMobile ? 0 : 1, // ✅ CLEAN LOOK
+          borderColor: "#e5e5e5",
         }}
       >
         <Box p={3}>
@@ -52,12 +54,10 @@ export default function CoursePlayerContent({ isMobile }) {
 
           {course.sections?.map((sec, i) => (
             <Box key={i} mb={4}>
-              {/* SECTION HEADER */}
               <Box bg="white" p={3} borderRadius={8} shadow={1}>
                 <Text bold fontSize="md">{sec.title}</Text>
               </Box>
 
-              {/* LESSONS */}
               <VStack mt={2} space={2}>
                 {sec.lessons?.map((lec, j) => {
                   const key = `${i}-${j}`;
@@ -105,12 +105,15 @@ export default function CoursePlayerContent({ isMobile }) {
         </Box>
       </ScrollView>
 
-      {/* RIGHT SIDE */}
-      <Box flex={1} p={isMobile ? 3 : 5}>
+      {/* RIGHT SIDE (70%) */}
+      <Box
+        style={{ width: isMobile ? "100%" : "70%" }} // ✅ FIXED
+        p={isMobile ? 3 : 5}
+      >
 
         {/* VIDEO PLAYER */}
         <Box
-          height={isMobile ? 220 : 400}
+          height={isMobile ? 250 : 500} // ✅ BIGGER VIDEO
           borderRadius={12}
           overflow="hidden"
           bg="black"
