@@ -24,18 +24,17 @@ export default function CoursePlayerHero({ isMobile }) {
 
         {/* CONTENT */}
         <VStack alignItems="center" space={2}>
-          <Text
-            color="white"
-            fontSize={isMobile ? "2xl" : "6xl"}
-            fontWeight="bold"
-          >
-            Course Grid Layout
-          </Text>
-
-          <Text color="white" fontSize={isMobile ? "sm" : "xl"} bold>
-            Home {" > "}{" "}
-            <Text color="#43b39c">Course Grid Layout</Text>
-          </Text>
+            <Text
+  color="white"
+  fontSize={isMobile ? "2xl" : "6xl"}
+  fontWeight="bold"
+>
+  Learn & Watch
+</Text>
+         <Text color="white" fontSize={isMobile ? "sm" : "xl"} bold>
+  Home {" > "} Course {" > "}
+  <Text color="#43b39c">Player</Text>
+</Text>
         </VStack>
       </ImageBackground>
     </Box>
