@@ -1,93 +1,42 @@
-import { Avatar, Box, HStack, Text } from "native-base";
+import { Box, Text } from "native-base";
 
-export default function CoursePlayerHero({ course, isMobile }) {
+export default function CoursePlayerHero({ isMobile }) {
   return (
-    <Box
-      bg="#080808"
-      px={isMobile ? 4 : 12}
-      py={isMobile ? 10 : 20}
-      minH={isMobile ? 250 : 450}
-      justifyContent="center"
-    >
-      <HStack
-        flexWrap="wrap"
-        justifyContent="space-between"
-        alignItems="center"
+       <Box height={isMobile ? 200 : 450} width="100%">
+      
+      <ImageBackground
+        source={{
+          uri: "https://edutest.gpcfindia.org/wp-content/uploads/2026/03/HED97HQ.jpeg",
+        }}
+        style={{ flex: 1, justifyContent: "center" }}
       >
-        {/* LEFT CONTENT */}
-        <Box maxW={isMobile ? "100%" : "750px"}>
-          
-          {/* 🔗 BREADCRUMB */}
-          <Text color="gray.400" fontSize={isMobile ? "sm" : "md"} mb={4}>
-            Home {'>'} Course {'>'} Lecture {''}
-            <Text color="#43b39c">{course?.title}</Text>
-          </Text>
+        {/* ✅ FIXED OVERLAY */}
+        <Box
+          pointerEvents="none"   // 🔥 IMPORTANT FIX
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          bg="rgba(0,0,0,0.6)"
+        />
 
-          {/* 🏷 TITLE */}
+        {/* CONTENT */}
+        <VStack alignItems="center" space={2}>
           <Text
             color="white"
-            fontSize={isMobile ? "3xl" : "5xl"}
+            fontSize={isMobile ? "2xl" : "6xl"}
             fontWeight="bold"
-            lineHeight={isMobile ? "38px" : "60px"}
           >
-            {course?.title}
+            Course Grid Layout
           </Text>
 
-          {/* 📝 DESCRIPTION (DYNAMIC) */}
-          <Text
-            color="gray.300"
-            mt={5}
-            fontSize={isMobile ? "md" : "lg"}
-            lineHeight={isMobile ? "22px" : "28px"}
-          >
-            {course?.description
-              ? course.description
-              : `Learn everything about ${
-    typeof course?.category === "object"
-      ? course.category?.name
-      : course?.category
-  }`}
+          <Text color="white" fontSize={isMobile ? "sm" : "xl"} bold>
+            Home {" > "}{" "}
+            <Text color="#43b39c">Course Grid Layout</Text>
           </Text>
-
-          {/* ⭐ META INFO */}
-          <HStack
-            mt={6}
-            space={5}
-            alignItems="center"
-            flexWrap="wrap"
-          >
-            {/* 👤 Instructor */}
-            <HStack alignItems="center" space={2}>
-              <Avatar size="sm" />
-              <Text color="white" fontSize="md">
-                {course?.instructor || "Unknown Instructor"}
-              </Text>
-            </HStack>
-
-            {/* Divider */}
-            <Text color="gray.500">|</Text>
-
-            {/* ⭐ Rating (static for now) */}
-            <Text color="yellow.400" fontSize="md">
-              ★★★★★
-            </Text>
-            <Text color="gray.300" fontSize="md">
-              (5.00 / 4 Reviews)
-            </Text>
-
-            {/* Divider */}
-            <Text color="gray.500">|</Text>
-
-            {/* 📅 Date (dynamic from DB) */}
-            <Text color="gray.400" fontSize="md">
-              Last Updated :{" "}
-              {course?.updatedAt
-                ? new Date(course.updatedAt).toDateString()
-                : "N/A"}
-            </Text>
-          </HStack>
-        </Box>
-      </HStack>
+        </VStack>
+      </ImageBackground>
     </Box>
   );
 }
