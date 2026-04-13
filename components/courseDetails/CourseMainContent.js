@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
-import { WebView } from "react-native-webview"; // 🔥 ADD THIS
+import { WebView } from "react-native-webview";
 
 export default function CourseMainContent({ isMobile, course }) {
 
@@ -110,49 +110,21 @@ const CourseSection = ({ title, isOpen, onPress, lessons }) => {
   }, [isOpen, contentHeight]);
 
   return (
-    <Box
-      borderWidth={1}
-      borderColor="gray.200"
-      borderRadius="xl"
-      mb={4}
-      overflow="hidden"
-      bg="white"
-      shadow={1}
-      w="100%"
-    >
-
+    <Box borderWidth={1} borderColor="gray.200" borderRadius="xl" mb={4} overflow="hidden" bg="white" shadow={1} w="100%">
       <Pressable onPress={onPress}>
-        <HStack
-          justifyContent="space-between"
-          alignItems="center"
-          px={4}
-          py={4}
-          bg={isOpen ? "gray.50" : "gray.100"}
-        >
-          <Text fontWeight="bold" fontSize="md">
-            {title}
-          </Text>
-
-          <Ionicons
-            name={isOpen ? "chevron-up" : "chevron-down"}
-            size={20}
-            color="gray"
-          />
+        <HStack justifyContent="space-between" alignItems="center" px={4} py={4} bg={isOpen ? "gray.50" : "gray.100"}>
+          <Text fontWeight="bold" fontSize="md">{title}</Text>
+          <Ionicons name={isOpen ? "chevron-up" : "chevron-down"} size={20} color="gray" />
         </HStack>
       </Pressable>
 
       <Animated.View style={{ height: animatedHeight, overflow: "hidden" }}>
-        <VStack
-          onLayout={(e) => {
-            setContentHeight(e.nativeEvent.layout.height);
-          }}
-        >
+        <VStack onLayout={(e) => setContentHeight(e.nativeEvent.layout.height)}>
           {lessons.map((item, index) => (
             <Lesson key={index} {...item} />
           ))}
         </VStack>
       </Animated.View>
-
     </Box>
   );
 };
@@ -161,80 +133,49 @@ const CourseSection = ({ title, isOpen, onPress, lessons }) => {
 const LearnItem = ({ text }) => (
   <HStack alignItems="flex-start" space={2}>
     <Ionicons name="checkmark-circle" size={18} color="#43b39c" />
-    <Text flex={1} color="gray.700" lineHeight={22}>
-      {text}
-    </Text>
+    <Text flex={1} color="gray.700" lineHeight={22}>{text}</Text>
   </HStack>
 );
 
-/* 🔥 FINAL LESSON WITH VIDEO PLAYER */
-const Lesson = ({ title, duration, video, type = "video" }) => {
+/* 🔥 FIXED LESSON */
+const Lesson = ({ title, duration, video }) => {
 
   const [showPlayer, setShowPlayer] = useState(false);
 
   return (
     <>
-      <Pressable onPress={() => video && setShowPlayer(true)}>
-        <HStack
-          justifyContent="space-between"
-          alignItems="center"
-          px={4}
-          py={4}
-          borderTopWidth={1}
-          borderColor="gray.100"
-          _hover={{ bg: "gray.50" }}
-          w="100%"
-        >
-          <HStack alignItems="center" space={3} flex={1}>
-            {type === "quiz" ? (
-              <Ionicons name="help-circle-outline" size={20} color="#f59e0b" />
-            ) : (
-              <Ionicons name="play-circle-outline" size={20} color="#43b39c" />
-            )}
+      <Pressable
+        onPress={() => {
+          console.log("VIDEO:", video); // 🔥 DEBUG
 
-            <Text color="gray.700" flex={1} fontSize="md">
-              {title}
-            </Text>
+          if (!video) {
+            alert("Video not available ❌");
+            return;
+          }
+
+          setShowPlayer(true);
+        }}
+      >
+        <HStack justifyContent="space-between" alignItems="center" px={4} py={4} borderTopWidth={1} borderColor="gray.100">
+          <HStack alignItems="center" space={3} flex={1}>
+            <Ionicons name="play-circle-outline" size={20} color="#43b39c" />
+            <Text flex={1}>{title}</Text>
           </HStack>
 
           <HStack alignItems="center" space={3}>
-            {duration && (
-              <Text color="gray.400" fontSize="sm">
-                {duration}
-              </Text>
-            )}
+            {duration && <Text fontSize="sm">{duration}</Text>}
             <Ionicons name="play-circle" size={18} color="#43b39c" />
           </HStack>
         </HStack>
       </Pressable>
 
-      {/* 🔥 VIDEO PLAYER */}
-      {showPlayer && video && (
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          right={0}
-          bottom={0}
-          bg="black"
-          zIndex={999}
-          justifyContent="center"
-          alignItems="center"
-        >
-          {/* CLOSE */}
-          <Pressable
-            position="absolute"
-            top={10}
-            right={5}
-            onPress={() => setShowPlayer(false)}
-          >
+      {showPlayer && (
+        <Box position="absolute" top={0} left={0} right={0} bottom={0} bg="black" zIndex={999} justifyContent="center">
+          <Pressable position="absolute" top={10} right={5} onPress={() => setShowPlayer(false)}>
             <Ionicons name="close" size={30} color="white" />
           </Pressable>
 
-          <WebView
-            source={{ uri: video }}
-            style={{ width: "100%", height: 300 }}
-          />
+          <WebView source={{ uri: video }} style={{ width: "100%", height: 300 }} />
         </Box>
       )}
     </>
