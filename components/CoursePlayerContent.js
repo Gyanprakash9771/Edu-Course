@@ -109,6 +109,17 @@ export default function CoursePlayerContent({ isMobile }) {
     setActiveIndex(lesson.lessonId);
   };
 
+  // ✅ OVERALL PROGRESS
+const totalLessonsCount = flatLessons.length;
+
+const completedCount = completed.filter(id =>
+  flatLessons.some(l => l.lessonId.toString() === id.toString())
+).length;
+
+const progressPercent = totalLessonsCount
+  ? Math.round((completedCount / totalLessonsCount) * 100)
+  : 0;
+
   return (
     <Box flexDirection="row" flex={1} bg="#f1f5f9">
 
@@ -125,9 +136,34 @@ export default function CoursePlayerContent({ isMobile }) {
         }}
       >
         <Box px={3} py={3}>
-          <Text fontSize="md" mb={3} fontWeight="bold">
-            Course Content
-          </Text>
+         <Text fontSize="md" mb={2} fontWeight="bold">
+  Course Content
+</Text>
+
+{/* ✅ OVERALL PROGRESS */}
+<Box mb={4} px={1}>
+  <HStack justifyContent="space-between" mb={1}>
+    <Text fontSize="xs" color="#6b7280">
+      Your Progress
+    </Text>
+    <Text fontSize="xs" fontWeight="bold" color="#16a34a">
+      {progressPercent}%
+    </Text>
+  </HStack>
+
+  <Box bg="#e5e7eb" height={3} borderRadius={3}>
+    <Box
+      bg="#22c55e"
+      height={3}
+      borderRadius={3}
+      width={`${progressPercent}%`}
+    />
+  </Box>
+
+  <Text fontSize="xs" color="#6b7280" mt={1}>
+    {completedCount} of {totalLessonsCount} lessons completed
+  </Text>
+</Box>
 
           {course.sections?.map((sec, i) => {
             const total = sec.lessons?.length || 0;
