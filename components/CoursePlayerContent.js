@@ -196,14 +196,11 @@ export default function CoursePlayerContent({ isMobile }) {
 
           {/* VIDEO FIXED */}
           <Box
-            width="100%"
-            maxWidth={1200}
-            height={isMobile ? 220 : 500}
-            borderRadius={10}
-            overflow="hidden"
-            bg="black"
-            mt={-60}
-          >
+  width="100%"
+  height={isMobile ? 260 : 650}
+  mt={-60}
+  bg="black"
+>
             {video && (
               Platform.OS === "web" ? (
                 <iframe
