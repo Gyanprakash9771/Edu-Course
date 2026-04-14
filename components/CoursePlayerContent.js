@@ -201,17 +201,20 @@ export default function CoursePlayerContent({ isMobile }) {
   mt={-60}
   bg="black"
   overflow="hidden"
+  position="relative"
 >
   {video && (
     Platform.OS === "web" ? (
       <iframe
-        width="100%"
-        height="100%"
-        src={`${video}?autoplay=1`}
+        src={`${video}?autoplay=1&controls=0&modestbranding=1`}
         style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: "177.77%",   // 🔥 MAGIC NUMBER (16:9 cover)
+          height: "100%",
+          transform: "translate(-50%, -50%)",
           border: "none",
-          transform: "scale(1.4)",   // 🔥 THIS IS THE MAGIC
-          transformOrigin: "center",
         }}
       />
     ) : (
