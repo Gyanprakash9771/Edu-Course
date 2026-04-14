@@ -10,26 +10,26 @@ import { WebView } from "react-native-webview";
 import API from "../services/api";
 
 export default function CoursePlayerContent({ isMobile }) {
-const route = useRoute();
-const url = Linking.useURL();
+  const route = useRoute();
+  const url = Linking.useURL();
 
-const [id, setId] = useState(route.params?.id || null);
+  const [id, setId] = useState(route.params?.id || null);
 
-useEffect(() => {
-  if (!id && url) {
-    const extracted = url
-      .split("/course-player/")[1]
-      ?.split("?")[0];
+  useEffect(() => {
+    if (!id && url) {
+      const extracted = url
+        .split("/course-player/")[1]
+        ?.split("?")[0];
 
-    if (extracted) {
-      setId(extracted);
+      if (extracted) {
+        setId(extracted);
+      }
     }
-  }
-}, [url]);
+  }, [url]);
 
-if (!id) {
-  return <Text mt={5} textAlign="center">Loading...</Text>;
-}
+  if (!id) {
+    return <Text mt={5} textAlign="center">Loading...</Text>;
+  }
 
   const [course, setCourse] = useState(null);
   const [video, setVideo] = useState("");
@@ -46,20 +46,51 @@ if (!id) {
   };
 
   useEffect(() => {
+    if (!id) return;
+
     const fetchCourse = async () => {
       const res = await API.get(`/courses/${id}`);
       setCourse(res.data);
 
-      const first = res.data.sections?.[0]?.lessons?.[0];
+      const flat = res.data.sections.flatMap(sec => sec.lessons);
+
+      // ✅ FETCH PROGRESS
+      try {
+        const progressRes = await API.get(`/progress/USER_ID_HERE/${id}`);
+
+        const progress = progressRes.data;
+
+        if (progress?.completedLessons) {
+          setCompleted(progress.completedLessons);
+        }
+
+        if (progress?.lastLesson) {
+          const last = flat.find(
+            l => l.lessonId === progress.lastLesson
+          );
+
+          if (last) {
+            setVideo(last.video);
+            setTitle(last.title);
+            setActiveIndex(last.lessonId);
+            return;
+          }
+        }
+      } catch (err) {
+        console.log("No progress found");
+      }
+
+      // ✅ fallback first video
+      const first = flat[0];
       if (first) {
         setVideo(first.video);
         setTitle(first.title);
-        setActiveIndex(first.lessonId); // ✅ FIX
+        setActiveIndex(first.lessonId);
       }
     };
+
     fetchCourse();
   }, [id]);
-
   if (!course) {
     return <Text mt={5} textAlign="center">Loading...</Text>;
   }
@@ -101,7 +132,7 @@ if (!id) {
           {course.sections?.map((sec, i) => {
             const total = sec.lessons?.length || 0;
             const done = sec.lessons.filter((lec) =>
-              completed.includes(lec.lessonId) // ✅ FIX
+              completed.some(id => id.toString() === lec.lessonId.toString()) // ✅ FIX
             ).length;
 
             return (
@@ -131,11 +162,13 @@ if (!id) {
                   <VStack>
                     {sec.lessons?.map((lec, j) => {
                       const isActive = activeIndex === lec.lessonId; // ✅ FIX
-                      const isDone = completed.includes(lec.lessonId); // ✅ FIX
+                      const isDone = completed.some(
+                        id => id.toString() === lec.lessonId.toString()
+                      ); // ✅ FIX
 
                       return (
                         <Pressable
-                          key={j}
+                          key={lec.lessonId}
                           onPress={() => goToLesson(lec)} // ✅ FIX
                         >
                           <HStack
@@ -164,7 +197,7 @@ if (!id) {
 
                             <HStack alignItems="center" space={2}>
                               <Text fontSize="xs" color="#6b7280">
-                                {lec.duration || "03:54"}
+                                {lec.time || "03:54"}
                               </Text>
 
                               {isDone && (
@@ -211,13 +244,32 @@ if (!id) {
 
           <HStack space={3} alignItems="center">
             <Pressable
-              onPress={() => {
-                if (!completed.includes(activeIndex)) {
+              onPress={async () => {
+                if (!completed.some(id => id.toString() === activeIndex.toString())) {
+
+                  // ✅ update UI instantly
                   setCompleted([...completed, activeIndex]);
+
+                  try {
+                    // ✅ SAVE TO BACKEND
+                    await API.post("/progress", {
+                      userId: "USER_ID_HERE", // 🔥 replace later with real user
+                      courseId: id,
+                      lessonId: activeIndex,
+                    });
+                  } catch (err) {
+                    console.log("Progress save failed", err);
+                  }
                 }
               }}
             >
-              <Box borderWidth={1} borderColor="white" px={3} py={1} borderRadius={6}>
+              <Box
+                borderWidth={1}
+                borderColor="white"
+                px={3}
+                py={1}
+                borderRadius={6}
+              >
                 <Text color="white">Mark as Complete</Text>
               </Box>
             </Pressable>
