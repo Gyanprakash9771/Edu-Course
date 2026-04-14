@@ -207,12 +207,11 @@ export default function CoursePlayerContent({ isMobile }) {
             {video && (
               Platform.OS === "web" ? (
                 <iframe
-                  width="100%"
-                  height="100%"
-                  src={`${video}?autoplay=1`}
-                  style={{ border: "none" }}
-                
-                />
+  width="100%"
+  height="100%"
+  src={`${video}?autoplay=1`}
+  style={{ border: "none" }}
+/>
               ) : (
                 <WebView source={{ uri: video }} style={{ flex: 1 }} />
               )
