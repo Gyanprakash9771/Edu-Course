@@ -200,20 +200,25 @@ export default function CoursePlayerContent({ isMobile }) {
   height={isMobile ? 260 : 650}
   mt={-60}
   bg="black"
+  overflow="hidden"
 >
-            {video && (
-              Platform.OS === "web" ? (
-                <iframe
-  width="100%"
-  height="100%"
-  src={`${video}?autoplay=1`}
-  style={{ border: "none" }}
-/>
-              ) : (
-                <WebView source={{ uri: video }} style={{ flex: 1 }} />
-              )
-            )}
-          </Box>
+  {video && (
+    Platform.OS === "web" ? (
+      <iframe
+        width="100%"
+        height="100%"
+        src={`${video}?autoplay=1`}
+        style={{
+          border: "none",
+          transform: "scale(1.4)",   // 🔥 THIS IS THE MAGIC
+          transformOrigin: "center",
+        }}
+      />
+    ) : (
+      <WebView source={{ uri: video }} style={{ flex: 1 }} />
+    )
+  )}
+</Box>
 
           {/* CONTENT */}
           <Box
