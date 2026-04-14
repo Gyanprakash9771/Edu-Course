@@ -32,6 +32,7 @@ export default function CoursePlayerContent({ isMobile }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const [completed, setCompleted] = useState([]);
   const [openSections, setOpenSections] = useState({ 0: true });
+  const [prevLesson, setPrevLesson] = useState(null);
 
   const toggleSection = (i) => {
     setOpenSections((prev) => ({
@@ -81,6 +82,7 @@ export default function CoursePlayerContent({ isMobile }) {
         setVideo(first.video);
         setTitle(first.title);
         setActiveIndex(first.lessonId);
+         setPrevLesson(first.lessonId);
       }
     };
 
@@ -102,12 +104,35 @@ export default function CoursePlayerContent({ isMobile }) {
     (l) => l.key === activeIndex
   );
 
-  const goToLesson = (lesson) => {
-    setVideo("");
-    setTimeout(() => setVideo(lesson.video), 50);
-    setTitle(lesson.title);
-    setActiveIndex(lesson.lessonId);
-  };
+ const goToLesson = async (lesson) => {
+
+  const USER_ID = "507f1f77bcf86cd799439011";
+
+  // ✅ MARK PREVIOUS LESSON COMPLETE
+  if (prevLesson && !completed.includes(prevLesson)) {
+
+    // update UI instantly
+    setCompleted(prev => [...prev, prevLesson]);
+
+    // save in backend
+    try {
+      await API.post("/progress", {
+        userId: USER_ID,
+        courseId: id,
+        lessonId: prevLesson,
+      });
+    } catch (err) {
+      console.log("Auto progress failed");
+    }
+  }
+
+  // ✅ PLAY NEW LESSON
+  setPrevLesson(lesson.lessonId);
+  setVideo("");
+  setTimeout(() => setVideo(lesson.video), 50);
+  setTitle(lesson.title);
+  setActiveIndex(lesson.lessonId);
+};
 
   // ✅ OVERALL PROGRESS
 const totalLessonsCount = flatLessons.length;
