@@ -13,32 +13,33 @@ export default function CourseSidebar({ course, isMobile }) {
       <Box bg="white" borderRadius="2xl" shadow={6} overflow="hidden">
 
         {/* 🎥 VIDEO THUMBNAIL */}
-        <Box position="relative">
-          <Image
-            source={{
-              uri:
-                course?.thumbnail ||
-                "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg",
-            }}
-            alt="video"
-            height={220}
-            width="100%"
-          />
+        {/* 🎥 VIDEO THUMBNAIL */}
+<Box position="relative">
+  <Image
+    source={{
+      uri: course?.previewVideo
+        ? `https://img.youtube.com/vi/${course.previewVideo.split("/embed/")[1]}/maxresdefault.jpg`
+        : "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg",
+    }}
+    alt="video"
+    height={220}
+    width="100%"
+  />
 
-          {/* ▶ PLAY BUTTON */}
-          <Box
-            position="absolute"
-            top="50%"
-            left="50%"
-            transform={[{ translateX: -25 }, { translateY: -25 }]}
-            bg="red.500"
-            p={3}
-            borderRadius="full"
-            shadow={4}
-          >
-            <Ionicons name="play" size={22} color="white" />
-          </Box>
-        </Box>
+  {/* ▶ PLAY BUTTON */}
+  <Box
+    position="absolute"
+    top="50%"
+    left="50%"
+    transform={[{ translateX: -25 }, { translateY: -25 }]}
+    bg="red.500"
+    p={3}
+    borderRadius="full"
+    shadow={4}
+  >
+    <Ionicons name="play" size={22} color="white" />
+  </Box>
+</Box>
 
         {/* 📦 CONTENT */}
         <VStack p={5} space={4}>
