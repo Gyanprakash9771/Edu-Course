@@ -115,27 +115,56 @@ export default function CoursePlayerContent({ isMobile }) {
                       const isDone = completed.includes(key);
 
                       return (
-                        <Pressable key={j} onPress={() => goToLesson({ ...lec, key })}>
-                          <HStack
-                            px={4}
-                            py={2.5}
-                            justifyContent="space-between"
-                            bg={isActive ? "#dee2e6" : "transparent"}
-                          >
-                            <HStack space={2} flex={1}>
-                              <Ionicons
-                                name={isDone ? "checkmark-circle" : "play-outline"}
-                                size={16}
-                                color={isDone ? "#22c55e" : "#666"}
-                              />
-                              <Text fontSize="sm" numberOfLines={1}>
-                                {lec.title}
-                              </Text>
-                            </HStack>
+                        <Pressable
+  key={j}
+  onPress={() => goToLesson({ ...lec, key })}
+>
+  <HStack
+    alignItems="center"
+    justifyContent="space-between"
+    px={4}
+    py={2.5}
+    bg={isActive ? "#eef6f3" : "transparent"}   // subtle green bg
+  >
 
-                            <Text fontSize="xs">{lec.duration || "03:54"}</Text>
-                          </HStack>
-                        </Pressable>
+    {/* LEFT */}
+    <HStack alignItems="center" space={2} flex={1}>
+
+      {/* ▶ PLAY ICON (outline style) */}
+      <Ionicons
+        name="play-outline"
+        size={14}
+        color={isActive ? "#22c55e" : "#9ca3af"}
+      />
+
+      <Text
+        fontSize="sm"
+        numberOfLines={1}
+        color={isActive ? "#22c55e" : "#374151"}   // green active text
+      >
+        {lec.title}
+      </Text>
+    </HStack>
+
+    {/* RIGHT SIDE */}
+    <HStack alignItems="center" space={2}>
+
+      <Text fontSize="xs" color="#6b7280">
+        {lec.duration || "03:54"}
+      </Text>
+
+      {/* ✅ COMPLETED CHECK */}
+      {isDone && (
+        <Ionicons
+          name="checkmark-circle"
+          size={16}
+          color="#22c55e"
+        />
+      )}
+    </HStack>
+
+  </HStack>
+</Pressable>
                       );
                     })}
                   </VStack>
