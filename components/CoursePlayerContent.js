@@ -62,14 +62,14 @@ export default function CoursePlayerContent({ isMobile }) {
   };
 
   return (
-    <Box flexDirection={isMobile ? "column" : "row"} flex={1}>
+    <Box flexDirection="row" flex={1} bg="#f1f5f9">
 
-      {/* 🔥 SIDEBAR */}
+      {/* ✅ SIDEBAR FIXED WIDTH */}
       <ScrollView
         style={{
-          width: isMobile ? "100%" : 100,
+          width: 300,
           backgroundColor: "#f8f9fa",
-          borderRightWidth: isMobile ? 0 : 1,
+          borderRightWidth: 1,
           borderColor: "#ddd",
         }}
       >
@@ -84,12 +84,9 @@ export default function CoursePlayerContent({ isMobile }) {
 
             return (
               <Box key={i} mb={1}>
-
-                {/* SECTION */}
                 <Pressable onPress={() => toggleSection(i)}>
                   <HStack
                     justifyContent="space-between"
-                    alignItems="center"
                     px={3}
                     py={2}
                     bg="#e9ecef"
@@ -98,7 +95,7 @@ export default function CoursePlayerContent({ isMobile }) {
                       {sec.title}
                     </Text>
 
-                    <HStack space={2} alignItems="center">
+                    <HStack space={2}>
                       <Text fontSize="xs">{done}/{total}</Text>
                       <Ionicons
                         name={openSections[i] ? "chevron-up" : "chevron-down"}
@@ -108,7 +105,6 @@ export default function CoursePlayerContent({ isMobile }) {
                   </HStack>
                 </Pressable>
 
-                {/* LESSONS */}
                 {openSections[i] && (
                   <VStack>
                     {sec.lessons?.map((lec, j) => {
@@ -117,32 +113,25 @@ export default function CoursePlayerContent({ isMobile }) {
                       const isDone = completed.includes(key);
 
                       return (
-                        <Pressable
-                          key={j}
-                          onPress={() => goToLesson({ ...lec, key })}
-                        >
+                        <Pressable key={j} onPress={() => goToLesson({ ...lec, key })}>
                           <HStack
-                            alignItems="center"
-                            justifyContent="space-between"
                             px={3}
                             py={2}
+                            justifyContent="space-between"
                             bg={isActive ? "#dee2e6" : "transparent"}
                           >
-                            <HStack space={2} alignItems="center" flex={1}>
+                            <HStack space={2} flex={1}>
                               <Ionicons
                                 name={isDone ? "checkmark-circle" : "play-outline"}
                                 size={16}
                                 color={isDone ? "#22c55e" : "#666"}
                               />
-
                               <Text fontSize="sm" numberOfLines={1}>
                                 {lec.title}
                               </Text>
                             </HStack>
 
-                            <Text fontSize="xs" color="#666">
-                              {lec.duration || "03:54"}
-                            </Text>
+                            <Text fontSize="xs">{lec.duration || "03:54"}</Text>
                           </HStack>
                         </Pressable>
                       );
@@ -155,20 +144,27 @@ export default function CoursePlayerContent({ isMobile }) {
         </Box>
       </ScrollView>
 
-      {/* 🔥 RIGHT SIDE */}
-      <Box flex={1} bg="#f1f5f9">
+      {/* ✅ RIGHT SIDE */}
+      <Box flex={1}>
 
-        {/* HEADER */}
+        {/* 🔥 HEADER (OVERLAY STYLE) */}
         <HStack
-          bg="#0f172a"
-          px={4}
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          zIndex={10}
+          bg="rgba(0,0,0,0.8)"
+          px={5}
           py={3}
           justifyContent="space-between"
           alignItems="center"
         >
           <HStack space={3} alignItems="center">
             <Ionicons name="arrow-back" size={20} color="white" />
-            <Text color="white">{course.title}</Text>
+            <Text color="white" fontWeight="bold">
+              {course.title}
+            </Text>
           </HStack>
 
           <HStack space={3} alignItems="center">
@@ -179,20 +175,19 @@ export default function CoursePlayerContent({ isMobile }) {
                 }
               }}
             >
-              <HStack borderWidth={1} borderColor="white" px={3} py={1} borderRadius={5}>
+              <Box borderWidth={1} borderColor="white" px={3} py={1} borderRadius={6}>
                 <Text color="white">Mark as Complete</Text>
-              </HStack>
+              </Box>
             </Pressable>
 
-            <Ionicons name="close" size={20} color="white" />
+            <Ionicons name="close" size={22} color="white" />
           </HStack>
         </HStack>
 
-        {/* CONTENT */}
         <ScrollView>
 
-          {/* VIDEO */}
-          <Box height={isMobile ? 220 : 450} bg="black">
+          {/* 🎬 VIDEO FULL WIDTH */}
+          <Box height={500} bg="black">
             {video && (
               Platform.OS === "web" ? (
                 <iframe
@@ -207,24 +202,27 @@ export default function CoursePlayerContent({ isMobile }) {
             )}
           </Box>
 
-          {/* DESCRIPTION */}
-          <Box bg="white" p={5}>
-            <Text fontSize="lg" fontWeight="bold">{title}</Text>
-            <Text mt={2} color="#555">
+          {/* 📄 CONTENT AREA */}
+          <Box bg="white" px={8} py={6}>
+            <Text fontSize="xl" fontWeight="bold">
+              {title}
+            </Text>
+
+            <Text mt={3} color="#555">
               The idea of a summary is a short text to prepare students for the
               activities within the topic or week.
             </Text>
           </Box>
 
-          {/* NAV */}
-          <HStack justifyContent="center" space={4} py={4}>
+          {/* 🔘 NAV BUTTONS CENTERED */}
+          <HStack justifyContent="center" space={4} py={5} bg="#e2e8f0">
             <Pressable
               onPress={() =>
                 currentIndex > 0 &&
                 goToLesson(flatLessons[currentIndex - 1])
               }
             >
-              <Box bg="#cbd5f5" px={4} py={2} borderRadius={5}>
+              <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
                 <Text>← Previous</Text>
               </Box>
             </Pressable>
@@ -235,18 +233,18 @@ export default function CoursePlayerContent({ isMobile }) {
                 goToLesson(flatLessons[currentIndex + 1])
               }
             >
-              <Box bg="#cbd5f5" px={4} py={2} borderRadius={5}>
+              <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
                 <Text>Next →</Text>
               </Box>
             </Pressable>
           </HStack>
         </ScrollView>
 
-        {/* FLOAT BUTTON */}
+        {/* 🔝 FLOAT BUTTON */}
         <Pressable
           position="absolute"
-          bottom={5}
-          right={5}
+          bottom={20}
+          right={20}
           bg="#22c55e"
           p={3}
           borderRadius={50}
