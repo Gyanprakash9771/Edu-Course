@@ -45,52 +45,56 @@ export default function CoursePlayerContent({ isMobile }) {
     }));
   };
 
-  useEffect(() => {
-    if (!id) return;
+useEffect(() => {
+  if (!id) return;
 
-    const fetchCourse = async () => {
-      const res = await API.get(`/courses/${id}`);
-      setCourse(res.data);
+  const fetchCourse = async () => {
+    const res = await API.get(`/courses/${id}`);
+    setCourse(res.data);
 
-      const flat = res.data.sections.flatMap(sec => sec.lessons);
+    const flat = res.data.sections.flatMap(sec => sec.lessons);
 
-      // ✅ FETCH PROGRESS
-      try {
-        const progressRes = await API.get(`/progress/USER_ID_HERE/${id}`);
+    try {
+      const USER_ID = "507f1f77bcf86cd799439011"; // ✅ TEMP FIX (same everywhere)
 
-        const progress = progressRes.data;
+      const progressRes = await API.get(`/progress/${USER_ID}/${id}`);
+      const progress = progressRes.data;
 
-        if (progress?.completedLessons) {
-          setCompleted(progress.completedLessons);
-        }
-
-        if (progress?.lastLesson) {
-          const last = flat.find(
-            l => l.lessonId === progress.lastLesson
-          );
-
-          if (last) {
-            setVideo(last.video);
-            setTitle(last.title);
-            setActiveIndex(last.lessonId);
-            return;
-          }
-        }
-      } catch (err) {
-        console.log("No progress found");
+      // ✅ normalize completed lessons
+      if (progress?.completedLessons) {
+        const normalized = progress.completedLessons.map(p => p.toString());
+        setCompleted(normalized);
       }
 
-      // ✅ fallback first video
-      const first = flat[0];
-      if (first) {
-        setVideo(first.video);
-        setTitle(first.title);
-        setActiveIndex(first.lessonId);
-      }
-    };
+      // ✅ fix last lesson match
+      if (progress?.lastLesson) {
+        const last = flat.find(
+          l => l.lessonId.toString() === progress.lastLesson.toString()
+        );
 
-    fetchCourse();
-  }, [id]);
+        if (last) {
+          setVideo(last.video);
+          setTitle(last.title);
+          setActiveIndex(last.lessonId);
+          return;
+        }
+      }
+
+    } catch (err) {
+      console.log("No progress found");
+    }
+
+    // ✅ fallback
+    const first = flat[0];
+    if (first) {
+      setVideo(first.video);
+      setTitle(first.title);
+      setActiveIndex(first.lessonId);
+    }
+  };
+
+  fetchCourse();
+}, [id]);
   if (!course) {
     return <Text mt={5} textAlign="center">Loading...</Text>;
   }
@@ -252,8 +256,9 @@ export default function CoursePlayerContent({ isMobile }) {
 
                   try {
                     // ✅ SAVE TO BACKEND
+                    const USER_ID = "507f1f77bcf86cd799439011";
                     await API.post("/progress", {
-                      userId: "USER_ID_HERE", // 🔥 replace later with real user
+                      userId: USER_ID, // 🔥 replace later with real user
                       courseId: id,
                       lessonId: activeIndex,
                     });
