@@ -64,10 +64,12 @@ export default function CoursePlayerContent({ isMobile }) {
   return (
     <Box flexDirection="row" flex={1} bg="#f1f5f9">
 
-      {/* ✅ SIDEBAR FIXED WIDTH */}
+      {/* ✅ SIDEBAR FIXED */}
       <ScrollView
         style={{
-          width: 300,
+          width: 320,
+          minWidth: 320,
+          maxWidth: 320,
           backgroundColor: "#f8f9fa",
           borderRightWidth: 1,
           borderColor: "#ddd",
@@ -144,10 +146,10 @@ export default function CoursePlayerContent({ isMobile }) {
         </Box>
       </ScrollView>
 
-      {/* ✅ RIGHT SIDE */}
-      <Box flex={1}>
+      {/* ✅ RIGHT SIDE FIXED */}
+      <Box flex={1} alignItems="center">
 
-        {/* 🔥 HEADER (OVERLAY STYLE) */}
+        {/* HEADER */}
         <HStack
           position="absolute"
           top={0}
@@ -184,10 +186,17 @@ export default function CoursePlayerContent({ isMobile }) {
           </HStack>
         </HStack>
 
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ alignItems: "center", paddingTop: 60 }}>
 
-          {/* 🎬 VIDEO FULL WIDTH */}
-          <Box height={500} bg="black">
+          {/* VIDEO FIXED */}
+          <Box
+            width="100%"
+            maxWidth={1000}
+            height={isMobile ? 220 : 500}
+            borderRadius={10}
+            overflow="hidden"
+            bg="black"
+          >
             {video && (
               Platform.OS === "web" ? (
                 <iframe
@@ -202,8 +211,14 @@ export default function CoursePlayerContent({ isMobile }) {
             )}
           </Box>
 
-          {/* 📄 CONTENT AREA */}
-          <Box bg="white" px={8} py={6}>
+          {/* CONTENT */}
+          <Box
+            bg="white"
+            px={8}
+            py={6}
+            width="100%"
+            maxWidth={1000}
+          >
             <Text fontSize="xl" fontWeight="bold">
               {title}
             </Text>
@@ -214,8 +229,15 @@ export default function CoursePlayerContent({ isMobile }) {
             </Text>
           </Box>
 
-          {/* 🔘 NAV BUTTONS CENTERED */}
-          <HStack justifyContent="center" space={4} py={5} bg="#e2e8f0">
+          {/* NAV */}
+          <HStack
+            justifyContent="center"
+            space={4}
+            py={5}
+            bg="#e2e8f0"
+            width="100%"
+            maxWidth={1000}
+          >
             <Pressable
               onPress={() =>
                 currentIndex > 0 &&
@@ -240,7 +262,7 @@ export default function CoursePlayerContent({ isMobile }) {
           </HStack>
         </ScrollView>
 
-        {/* 🔝 FLOAT BUTTON */}
+        {/* FLOAT BUTTON */}
         <Pressable
           position="absolute"
           bottom={20}
