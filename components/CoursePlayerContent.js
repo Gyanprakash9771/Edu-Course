@@ -1,3 +1,5 @@
+// ONLY CHANGES APPLIED → lessonId based logic
+
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import * as Linking from "expo-linking";
@@ -52,7 +54,7 @@ if (!id) {
       if (first) {
         setVideo(first.video);
         setTitle(first.title);
-        setActiveIndex("0-0");
+        setActiveIndex(first.lessonId); // ✅ FIX
       }
     };
     fetchCourse();
@@ -62,10 +64,10 @@ if (!id) {
     return <Text mt={5} textAlign="center">Loading...</Text>;
   }
 
-  const flatLessons = course.sections.flatMap((sec, i) =>
-    sec.lessons.map((lec, j) => ({
+  const flatLessons = course.sections.flatMap((sec) =>
+    sec.lessons.map((lec) => ({
       ...lec,
-      key: `${i}-${j}`,
+      key: lec.lessonId, // ✅ FIX
     }))
   );
 
@@ -77,13 +79,12 @@ if (!id) {
     setVideo("");
     setTimeout(() => setVideo(lesson.video), 50);
     setTitle(lesson.title);
-    setActiveIndex(lesson.key);
+    setActiveIndex(lesson.lessonId); // ✅ FIX
   };
 
   return (
     <Box flexDirection="row" flex={1} bg="#f1f5f9">
 
-      {/* ✅ SIDEBAR FIXED */}
       <ScrollView
         style={{
           width: 320,
@@ -99,8 +100,8 @@ if (!id) {
 
           {course.sections?.map((sec, i) => {
             const total = sec.lessons?.length || 0;
-            const done = sec.lessons.filter((_, j) =>
-              completed.includes(`${i}-${j}`)
+            const done = sec.lessons.filter((lec) =>
+              completed.includes(lec.lessonId) // ✅ FIX
             ).length;
 
             return (
@@ -129,61 +130,54 @@ if (!id) {
                 {openSections[i] && (
                   <VStack>
                     {sec.lessons?.map((lec, j) => {
-                      const key = `${i}-${j}`;
-                      const isActive = activeIndex === key;
-                      const isDone = completed.includes(key);
+                      const isActive = activeIndex === lec.lessonId; // ✅ FIX
+                      const isDone = completed.includes(lec.lessonId); // ✅ FIX
 
                       return (
                         <Pressable
-  key={j}
-  onPress={() => goToLesson({ ...lec, key })}
->
-  <HStack
-    alignItems="center"
-    justifyContent="space-between"
-    px={4}
-    py={2.5}
-    bg={isActive ? "#eef6f3" : "transparent"}   // subtle green bg
-  >
+                          key={j}
+                          onPress={() => goToLesson(lec)} // ✅ FIX
+                        >
+                          <HStack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            px={4}
+                            py={2.5}
+                            bg={isActive ? "#eef6f3" : "transparent"}
+                          >
 
-    {/* LEFT */}
-    <HStack alignItems="center" space={2} flex={1}>
+                            <HStack alignItems="center" space={2} flex={1}>
+                              <Ionicons
+                                name="play-outline"
+                                size={14}
+                                color={isActive ? "#22c55e" : "#9ca3af"}
+                              />
 
-      {/* ▶ PLAY ICON (outline style) */}
-      <Ionicons
-        name="play-outline"
-        size={14}
-        color={isActive ? "#22c55e" : "#9ca3af"}
-      />
+                              <Text
+                                fontSize="sm"
+                                numberOfLines={1}
+                                color={isActive ? "#22c55e" : "#374151"}
+                              >
+                                {lec.title}
+                              </Text>
+                            </HStack>
 
-      <Text
-        fontSize="sm"
-        numberOfLines={1}
-        color={isActive ? "#22c55e" : "#374151"}   // green active text
-      >
-        {lec.title}
-      </Text>
-    </HStack>
+                            <HStack alignItems="center" space={2}>
+                              <Text fontSize="xs" color="#6b7280">
+                                {lec.duration || "03:54"}
+                              </Text>
 
-    {/* RIGHT SIDE */}
-    <HStack alignItems="center" space={2}>
+                              {isDone && (
+                                <Ionicons
+                                  name="checkmark-circle"
+                                  size={16}
+                                  color="#22c55e"
+                                />
+                              )}
+                            </HStack>
 
-      <Text fontSize="xs" color="#6b7280">
-        {lec.duration || "03:54"}
-      </Text>
-
-      {/* ✅ COMPLETED CHECK */}
-      {isDone && (
-        <Ionicons
-          name="checkmark-circle"
-          size={16}
-          color="#22c55e"
-        />
-      )}
-    </HStack>
-
-  </HStack>
-</Pressable>
+                          </HStack>
+                        </Pressable>
                       );
                     })}
                   </VStack>
@@ -194,10 +188,8 @@ if (!id) {
         </Box>
       </ScrollView>
 
-      {/* ✅ RIGHT SIDE FIXED */}
       <Box flex={1}>
 
-        {/* HEADER */}
         <HStack
           position="absolute"
           top={0}
@@ -234,15 +226,8 @@ if (!id) {
           </HStack>
         </HStack>
 
-        <ScrollView
-          contentContainerStyle={{
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-            paddingTop: 0,
-            paddingBottom: 40,
-          }}
-        >
-
-          {/* VIDEO FIXED */}
           <Box
             width="100%"
             height={isMobile ? 260 : 650}
@@ -263,7 +248,6 @@ if (!id) {
             )}
           </Box>
 
-          {/* CONTENT */}
           <Box
             bg="white"
             px={6}
@@ -283,7 +267,6 @@ if (!id) {
             </Text>
           </Box>
 
-          {/* NAV */}
           <HStack
             justifyContent="center"
             space={4}
@@ -317,9 +300,6 @@ if (!id) {
             </Pressable>
           </HStack>
         </ScrollView>
-
-        {/* FLOAT BUTTON */}
-        
       </Box>
     </Box>
   );
