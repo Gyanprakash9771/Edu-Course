@@ -12,8 +12,8 @@ import API from "../services/api";
 export default function CoursePlayerContent({ isMobile }) {
   const { width } = useWindowDimensions();
 
-const isMobileScreen = width < 768;
-const isTabletScreen = width >= 768 && width < 1024;
+  const isMobileScreen = width < 768;
+  const isTabletScreen = width >= 768 && width < 1024;
 
   const route = useRoute();
   const url = Linking.useURL();
@@ -75,6 +75,7 @@ const isTabletScreen = width >= 768 && width < 1024;
             setVideo(last.video);
             setTitle(last.title);
             setActiveIndex(last.lessonId);
+            setPrevLesson(last.lessonId);
             return;
           }
         }
@@ -87,7 +88,7 @@ const isTabletScreen = width >= 768 && width < 1024;
         setVideo(first.video);
         setTitle(first.title);
         setActiveIndex(first.lessonId);
-         setPrevLesson(first.lessonId);
+        setPrevLesson(first.lessonId);
       }
     };
 
@@ -106,195 +107,201 @@ const isTabletScreen = width >= 768 && width < 1024;
   );
 
   const currentIndex = flatLessons.findIndex(
-    (l) => l.key === activeIndex
-  );
+  (l) => l.key.toString() === activeIndex?.toString()
+);
 
- const goToLesson = async (lesson) => {
+  const goToLesson = async (lesson) => {
 
-  const USER_ID = "507f1f77bcf86cd799439011";
+    const USER_ID = "507f1f77bcf86cd799439011";
 
-  // ✅ MARK PREVIOUS LESSON COMPLETE
-  if (prevLesson && !completed.includes(prevLesson)) {
+    // ✅ MARK PREVIOUS LESSON COMPLETE
+   if (
+  prevLesson &&
+  !completed.some(id => id.toString() === prevLesson.toString())
+){
 
-    // update UI instantly
-    setCompleted(prev => [...prev, prevLesson]);
+      // update UI instantly
+      setCompleted(prev =>
+  prev.some(id => id.toString() === prevLesson.toString())
+    ? prev
+    : [...prev, prevLesson]
+);
 
-    // save in backend
-    try {
-      await API.post("/progress", {
-        userId: USER_ID,
-        courseId: id,
-        lessonId: prevLesson,
-      });
-    } catch (err) {
-      console.log("Auto progress failed");
+      // save in backend
+      try {
+        await API.post("/progress", {
+          userId: USER_ID,
+          courseId: id,
+          lessonId: prevLesson,
+        });
+      } catch (err) {
+        console.log("Auto progress failed");
+      }
     }
-  }
 
-  // ✅ PLAY NEW LESSON
-  setPrevLesson(lesson.lessonId);
-  setVideo("");
-  setTimeout(() => setVideo(lesson.video), 50);
-  setTitle(lesson.title);
-  setActiveIndex(lesson.lessonId);
-};
+    // ✅ PLAY NEW LESSON
+    setPrevLesson(lesson.lessonId);
+    setVideo(lesson.video);
+    setTitle(lesson.title);
+    setActiveIndex(lesson.lessonId);
+  };
 
   // ✅ OVERALL PROGRESS
-const totalLessonsCount = flatLessons.length;
+  const totalLessonsCount = flatLessons.length;
 
-const completedCount = completed.filter(id =>
-  flatLessons.some(l => l.lessonId.toString() === id.toString())
-).length;
+  const completedCount = completed.filter(id =>
+    flatLessons.some(l => l.lessonId.toString() === id.toString())
+  ).length;
 
-const progressPercent = totalLessonsCount
-  ? Math.round((completedCount / totalLessonsCount) * 100)
-  : 0;
+  const progressPercent = totalLessonsCount
+    ? Math.round((completedCount / totalLessonsCount) * 100)
+    : 0;
 
   return (
     <Box
-  flexDirection={isMobileScreen ? "column" : "row"}
-  flex={1}
-  bg="#f1f5f9"
->
+      flexDirection={isMobileScreen ? "column" : "row"}
+      flex={1}
+      bg="#f1f5f9"
+    >
 
       {/* ================= SIDEBAR ================= */}
       {!isMobileScreen && (
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{
-          width: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
-minWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
-maxWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
-          backgroundColor: "#f8f9fa",
-          borderRightWidth: 1,
-          borderColor: "#ddd",
-        }}
-      >
-        <Box px={3} py={3}>
-         <Text fontSize="md" mb={2} fontWeight="bold">
-  Course Content
-</Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{
+            width: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
+            minWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
+            maxWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
+            backgroundColor: "#f8f9fa",
+            borderRightWidth: 1,
+            borderColor: "#ddd",
+          }}
+        >
+          <Box px={3} py={3}>
+            <Text fontSize="md" mb={2} fontWeight="bold">
+              Course Content
+            </Text>
 
-{/* ✅ OVERALL PROGRESS */}
-<Box mb={4} px={1}>
-  <HStack justifyContent="space-between" mb={1}>
-    <Text fontSize="xs" color="#6b7280">
-      Your Progress
-    </Text>
-    <Text fontSize="xs" fontWeight="bold" color="#16a34a">
-      {progressPercent}%
-    </Text>
-  </HStack>
+            {/* ✅ OVERALL PROGRESS */}
+            <Box mb={4} px={1}>
+              <HStack justifyContent="space-between" mb={1}>
+                <Text fontSize="xs" color="#6b7280">
+                  Your Progress
+                </Text>
+                <Text fontSize="xs" fontWeight="bold" color="#16a34a">
+                  {progressPercent}%
+                </Text>
+              </HStack>
 
-  <Box bg="#e5e7eb" height={3} borderRadius={3}>
-    <Box
-      bg="#22c55e"
-      height={3}
-      borderRadius={3}
-      width={`${progressPercent}%`}
-    />
-  </Box>
-
-  <Text fontSize="xs" color="#6b7280" mt={1}>
-    {completedCount} of {totalLessonsCount} lessons completed
-  </Text>
-</Box>
-
-          {course.sections?.map((sec, i) => {
-            const total = sec.lessons?.length || 0;
-            const done = sec.lessons.filter((lec) =>
-              completed.some(id => id.toString() === lec.lessonId.toString())
-            ).length;
-
-            return (
-              <Box key={i} mb={4}>
-
-                {/* SECTION HEADER */}
-                <Pressable onPress={() => toggleSection(i)}>
-                  <HStack
-                    justifyContent="space-between"
-                    px={4}
-                    py={3}
-                    bg="#f1f5f9"
-                    borderRadius={6}
-                  >
-                    <Text fontSize="sm" fontWeight="bold">
-                      {sec.title}
-                    </Text>
-
-                    <Text fontSize="xs" color="#6b7280">
-                      {done}/{total}
-                    </Text>
-                  </HStack>
-                </Pressable>
-
-                {/* PROGRESS BAR */}
-                <Box px={4} mt={1} mb={2}>
-                  <Box bg="#e5e7eb" height={3} borderRadius={3}>
-                    <Box
-                      bg="#22c55e"
-                      height={3}
-                      borderRadius={3}
-                      width={`${total ? (done / total) * 100 : 0}%`}
-                    />
-                  </Box>
-                </Box>
-
-                {/* LESSONS */}
-                {openSections[i] && (
-                  <VStack>
-                    {sec.lessons?.map((lec) => {
-                      const isActive = activeIndex === lec.lessonId;
-                      const isDone = completed.some(
-                        id => id.toString() === lec.lessonId.toString()
-                      );
-
-                      return (
-                        <Pressable
-                          key={lec.lessonId}
-                          onPress={() => goToLesson(lec)}
-                        >
-                          <HStack
-                            alignItems="center"
-                            justifyContent="space-between"
-                            px={4}
-                            py={3}
-                            borderRadius={6}
-                            bg={isActive ? "#dcfce7" : "transparent"}
-                          >
-
-                            <HStack alignItems="center" space={2} flex={1}>
-                              <Ionicons
-                                name={isDone ? "checkmark-circle" : "play-circle-outline"}
-                                size={18}
-                                color={isDone ? "#22c55e" : "#9ca3af"}
-                              />
-
-                              <Text
-                                fontSize="sm"
-                                numberOfLines={1}
-                                fontWeight={isActive ? "bold" : "normal"}
-                                color={isActive ? "#16a34a" : "#374151"}
-                              >
-                                {lec.title}
-                              </Text>
-                            </HStack>
-
-                            <Text fontSize="xs" color="#6b7280">
-                              {lec.time || "03:54"}
-                            </Text>
-
-                          </HStack>
-                        </Pressable>
-                      );
-                    })}
-                  </VStack>
-                )}
+              <Box bg="#e5e7eb" height={3} borderRadius={3}>
+                <Box
+                  bg="#22c55e"
+                  height={3}
+                  borderRadius={3}
+                  width={`${progressPercent}%`}
+                />
               </Box>
-            );
-          })}
-        </Box>
-      </ScrollView>
+
+              <Text fontSize="xs" color="#6b7280" mt={1}>
+                {completedCount} of {totalLessonsCount} lessons completed
+              </Text>
+            </Box>
+
+            {course.sections?.map((sec, i) => {
+              const total = sec.lessons?.length || 0;
+              const done = sec.lessons.filter((lec) =>
+                completed.some(id => id.toString() === lec.lessonId.toString())
+              ).length;
+
+              return (
+                <Box key={i} mb={4}>
+
+                  {/* SECTION HEADER */}
+                  <Pressable onPress={() => toggleSection(i)}>
+                    <HStack
+                      justifyContent="space-between"
+                      px={4}
+                      py={3}
+                      bg="#f1f5f9"
+                      borderRadius={6}
+                    >
+                      <Text fontSize="sm" fontWeight="bold">
+                        {sec.title}
+                      </Text>
+
+                      <Text fontSize="xs" color="#6b7280">
+                        {done}/{total}
+                      </Text>
+                    </HStack>
+                  </Pressable>
+
+                  {/* PROGRESS BAR */}
+                  <Box px={4} mt={1} mb={2}>
+                    <Box bg="#e5e7eb" height={3} borderRadius={3}>
+                      <Box
+                        bg="#22c55e"
+                        height={3}
+                        borderRadius={3}
+                        width={`${total ? (done / total) * 100 : 0}%`}
+                      />
+                    </Box>
+                  </Box>
+
+                  {/* LESSONS */}
+                  {openSections[i] && (
+                    <VStack>
+                      {sec.lessons?.map((lec) => {
+                        const isActive = activeIndex === lec.lessonId;
+                        const isDone = completed.some(
+                          id => id.toString() === lec.lessonId.toString()
+                        );
+
+                        return (
+                          <Pressable
+                            key={lec.lessonId}
+                            onPress={() => goToLesson(lec)}
+                          >
+                            <HStack
+                              alignItems="center"
+                              justifyContent="space-between"
+                              px={4}
+                              py={3}
+                              borderRadius={6}
+                              bg={isActive ? "#dcfce7" : "transparent"}
+                            >
+
+                              <HStack alignItems="center" space={2} flex={1}>
+                                <Ionicons
+                                  name={isDone ? "checkmark-circle" : "play-circle-outline"}
+                                  size={18}
+                                  color={isDone ? "#22c55e" : "#9ca3af"}
+                                />
+
+                                <Text
+                                  fontSize="sm"
+                                  numberOfLines={1}
+                                  fontWeight={isActive ? "bold" : "normal"}
+                                  color={isActive ? "#16a34a" : "#374151"}
+                                >
+                                  {lec.title}
+                                </Text>
+                              </HStack>
+
+                              <Text fontSize="xs" color="#6b7280">
+                                {lec.time || "03:54"}
+                              </Text>
+
+                            </HStack>
+                          </Pressable>
+                        );
+                      })}
+                    </VStack>
+                  )}
+                </Box>
+              );
+            })}
+          </Box>
+        </ScrollView>
       )}
 
       {/* ================= RIGHT SIDE (UNCHANGED) ================= */}
@@ -350,129 +357,129 @@ maxWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
 
         <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-  {/* VIDEO */}
-  <Box
-    width="100%"
-    height={isMobileScreen ? 220 : isTabletScreen ? 350 : 650}
-    mt={isMobileScreen ? 0 : -60}
-    bg="black"
-  >
-    {video && (
-      Platform.OS === "web" ? (
-        <iframe
-          width="100%"
-          height="100%"
-          src={`${video}?autoplay=1`}
-          style={{ border: "none" }}
-        />
-      ) : (
-        <WebView source={{ uri: video }} style={{ flex: 1 }} />
-      )
-    )}
-  </Box>
+          {/* VIDEO */}
+          <Box
+            width="100%"
+            height={isMobileScreen ? 220 : isTabletScreen ? 350 : 650}
+            mt={isMobileScreen ? 0 : -60}
+            bg="black"
+          >
+            {video && (
+              Platform.OS === "web" ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`${video}?autoplay=1`}
+                  style={{ border: "none" }}
+                />
+              ) : (
+                <WebView source={{ uri: video }} style={{ flex: 1 }} />
+              )
+            )}
+          </Box>
 
-  {/* ✅ ADD THIS BLOCK (MOBILE SIDEBAR) */}
-  {isMobileScreen && (
-    <Box
-      bg="#f8f9fa"
-      borderTopWidth={1}
-      borderColor="#ddd"
-      px={3}
-      py={3}
-    >
-      <Text fontSize="md" mb={2} fontWeight="bold">
-        Course Content
-      </Text>
+          {/* ✅ ADD THIS BLOCK (MOBILE SIDEBAR) */}
+          {isMobileScreen && (
+            <Box
+              bg="#f8f9fa"
+              borderTopWidth={1}
+              borderColor="#ddd"
+              px={3}
+              py={3}
+            >
+              <Text fontSize="md" mb={2} fontWeight="bold">
+                Course Content
+              </Text>
 
-      <Text fontSize="xs" mb={2} color="#16a34a">
-        {progressPercent}% Completed
-      </Text>
+              <Text fontSize="xs" mb={2} color="#16a34a">
+                {progressPercent}% Completed
+              </Text>
 
-      {course.sections?.map((sec, i) => {
-        const total = sec.lessons?.length || 0;
-        const done = sec.lessons.filter((lec) =>
-          completed.some(id => id.toString() === lec.lessonId.toString())
-        ).length;
+              {course.sections?.map((sec, i) => {
+                const total = sec.lessons?.length || 0;
+                const done = sec.lessons.filter((lec) =>
+                  completed.some(id => id.toString() === lec.lessonId.toString())
+                ).length;
 
-        return (
-          <Box key={i} mb={3}>
-            <Pressable onPress={() => toggleSection(i)}>
-              <HStack justifyContent="space-between">
-                <Text fontWeight="bold">{sec.title}</Text>
-                <Text fontSize="xs">{done}/{total}</Text>
-              </HStack>
+                return (
+                  <Box key={i} mb={3}>
+                    <Pressable onPress={() => toggleSection(i)}>
+                      <HStack justifyContent="space-between">
+                        <Text fontWeight="bold">{sec.title}</Text>
+                        <Text fontSize="xs">{done}/{total}</Text>
+                      </HStack>
+                    </Pressable>
+
+                    {openSections[i] &&
+                      sec.lessons.map((lec) => (
+                        <Pressable
+                          key={lec.lessonId}
+                          onPress={() => goToLesson(lec)}
+                        >
+                          <HStack justifyContent="space-between" py={2}>
+                            <Text numberOfLines={1}>{lec.title}</Text>
+                            <Text fontSize="xs">{lec.time}</Text>
+                          </HStack>
+                        </Pressable>
+                      ))}
+                  </Box>
+                );
+              })}
+            </Box>
+          )}
+
+          {/* CONTENT */}
+          <Box
+            bg="white"
+            px={6}
+            py={5}
+            mt={3}
+            borderRadius={8}
+            width="100%"
+            maxWidth={1000}
+          >
+            <Text fontSize="xl" fontWeight="bold">{title}</Text>
+
+            <Text mt={3} color="#555">
+              The idea of a summary is a short text to prepare students for the
+              activities within the topic or week.
+            </Text>
+          </Box>
+
+          {/* NAV */}
+          <HStack
+            justifyContent="center"
+            space={4}
+            py={6}
+            mt={2}
+            bg="#e2e8f0"
+            width="100%"
+            maxWidth={1000}
+          >
+            <Pressable
+              onPress={() =>
+                currentIndex > 0 &&
+                goToLesson(flatLessons[currentIndex - 1])
+              }
+            >
+              <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
+                <Text>← Previous</Text>
+              </Box>
             </Pressable>
 
-            {openSections[i] &&
-              sec.lessons.map((lec) => (
-                <Pressable
-                  key={lec.lessonId}
-                  onPress={() => goToLesson(lec)}
-                >
-                  <HStack justifyContent="space-between" py={2}>
-                    <Text numberOfLines={1}>{lec.title}</Text>
-                    <Text fontSize="xs">{lec.time}</Text>
-                  </HStack>
-                </Pressable>
-              ))}
-          </Box>
-        );
-      })}
-    </Box>
-  )}
+            <Pressable
+              onPress={() =>
+                currentIndex < flatLessons.length - 1 &&
+                goToLesson(flatLessons[currentIndex + 1])
+              }
+            >
+              <Box bg="#cbd5f5" px={6} py={2.5} borderRadius={6}>
+                <Text>Next →</Text>
+              </Box>
+            </Pressable>
+          </HStack>
 
-  {/* CONTENT */}
-  <Box
-    bg="white"
-    px={6}
-    py={5}
-    mt={3}
-    borderRadius={8}
-    width="100%"
-    maxWidth={1000}
-  >
-    <Text fontSize="xl" fontWeight="bold">{title}</Text>
-
-    <Text mt={3} color="#555">
-      The idea of a summary is a short text to prepare students for the
-      activities within the topic or week.
-    </Text>
-  </Box>
-
-  {/* NAV */}
-  <HStack
-    justifyContent="center"
-    space={4}
-    py={6}
-    mt={2}
-    bg="#e2e8f0"
-    width="100%"
-    maxWidth={1000}
-  >
-    <Pressable
-      onPress={() =>
-        currentIndex > 0 &&
-        goToLesson(flatLessons[currentIndex - 1])
-      }
-    >
-      <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
-        <Text>← Previous</Text>
-      </Box>
-    </Pressable>
-
-    <Pressable
-      onPress={() =>
-        currentIndex < flatLessons.length - 1 &&
-        goToLesson(flatLessons[currentIndex + 1])
-      }
-    >
-      <Box bg="#cbd5f5" px={6} py={2.5} borderRadius={6}>
-        <Text>Next →</Text>
-      </Box>
-    </Pressable>
-  </HStack>
-
-</ScrollView>
+        </ScrollView>
       </Box>
     </Box>
   );
