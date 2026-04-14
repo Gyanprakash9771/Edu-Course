@@ -147,7 +147,7 @@ export default function CoursePlayerContent({ isMobile }) {
       </ScrollView>
 
       {/* ✅ RIGHT SIDE FIXED */}
-      <Box flex={1} alignItems="center">
+      <Box flex={1}>
 
         {/* HEADER */}
         <HStack
@@ -188,7 +188,7 @@ export default function CoursePlayerContent({ isMobile }) {
 
         <ScrollView
           contentContainerStyle={{
-            
+
             paddingTop: 0,
             paddingBottom: 40,
           }}
@@ -196,24 +196,24 @@ export default function CoursePlayerContent({ isMobile }) {
 
           {/* VIDEO FIXED */}
           <Box
-  width="100%"
-  height={isMobile ? 260 : 650}
-  mt={-60}
-  bg="black"
->
-  {video && (
-    Platform.OS === "web" ? (
-      <iframe
-        width="100%"
-        height="100%"
-        src={`${video}?autoplay=1`}
-        style={{ border: "none" }}
-      />
-    ) : (
-      <WebView source={{ uri: video }} style={{ flex: 1 }} />
-    )
-  )}
-</Box>
+            width="100%"
+            height={isMobile ? 260 : 650}
+            mt={-60}
+            bg="black"
+          >
+            {video && (
+              Platform.OS === "web" ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`${video}?autoplay=1`}
+                  style={{ border: "none" }}
+                />
+              ) : (
+                <WebView source={{ uri: video }} style={{ flex: 1 }} />
+              )
+            )}
+          </Box>
 
           {/* CONTENT */}
           <Box
