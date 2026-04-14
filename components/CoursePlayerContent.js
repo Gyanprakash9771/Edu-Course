@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
+import * as Linking from "expo-linking";
 import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
@@ -7,8 +8,26 @@ import { WebView } from "react-native-webview";
 import API from "../services/api";
 
 export default function CoursePlayerContent({ isMobile }) {
-  const route = useRoute();
-  const { id } = route.params;
+const route = useRoute();
+const url = Linking.useURL();
+
+const [id, setId] = useState(route.params?.id || null);
+
+useEffect(() => {
+  if (!id && url) {
+    const extracted = url
+      .split("/course-player/")[1]
+      ?.split("?")[0];
+
+    if (extracted) {
+      setId(extracted);
+    }
+  }
+}, [url]);
+
+if (!id) {
+  return <Text mt={5} textAlign="center">Loading...</Text>;
+}
 
   const [course, setCourse] = useState(null);
   const [video, setVideo] = useState("");

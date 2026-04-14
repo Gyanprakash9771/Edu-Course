@@ -15,10 +15,10 @@ const Stack = createNativeStackNavigator();
 const linking = {
   prefixes: [
     Linking.createURL("/"),
-    "http://localhost:8081",
+    "http://localhost:8081", // local
+    "https://edu-course-pi.vercel.app", // 🔥 your real domain
   ],
   config: {
-    initialRouteName: "Home",   // ✅ ADD THIS
     screens: {
       Home: "",
       CourseScreen: "courses",
