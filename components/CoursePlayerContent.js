@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
-import { Box, HStack, Pressable, Text } from "native-base";
+import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView } from "react-native";
 import { WebView } from "react-native-webview";
@@ -15,6 +15,14 @@ export default function CoursePlayerContent({ isMobile }) {
   const [title, setTitle] = useState("");
   const [activeIndex, setActiveIndex] = useState(null);
   const [completed, setCompleted] = useState([]);
+  const [openSections, setOpenSections] = useState({ 0: true });
+
+  const toggleSection = (i) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [i]: !prev[i],
+    }));
+  };
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -56,27 +64,114 @@ export default function CoursePlayerContent({ isMobile }) {
   return (
     <Box flexDirection={isMobile ? "column" : "row"} flex={1}>
 
-      {/* LEFT SIDEBAR (KEEP YOUR EXISTING ONE HERE) */}
-      
-      {/* RIGHT SIDE */}
+      {/* 🔥 SIDEBAR */}
+      <ScrollView
+        style={{
+          width: isMobile ? "100%" : 320,
+          backgroundColor: "#f8f9fa",
+          borderRightWidth: isMobile ? 0 : 1,
+          borderColor: "#ddd",
+        }}
+      >
+        <Box p={2}>
+          <Text fontSize="md" mb={2}>Course Content</Text>
+
+          {course.sections?.map((sec, i) => {
+            const total = sec.lessons?.length || 0;
+            const done = sec.lessons.filter((_, j) =>
+              completed.includes(`${i}-${j}`)
+            ).length;
+
+            return (
+              <Box key={i} mb={1}>
+
+                {/* SECTION */}
+                <Pressable onPress={() => toggleSection(i)}>
+                  <HStack
+                    justifyContent="space-between"
+                    alignItems="center"
+                    px={3}
+                    py={2}
+                    bg="#e9ecef"
+                  >
+                    <Text fontSize="sm" fontWeight="bold">
+                      {sec.title}
+                    </Text>
+
+                    <HStack space={2} alignItems="center">
+                      <Text fontSize="xs">{done}/{total}</Text>
+                      <Ionicons
+                        name={openSections[i] ? "chevron-up" : "chevron-down"}
+                        size={14}
+                      />
+                    </HStack>
+                  </HStack>
+                </Pressable>
+
+                {/* LESSONS */}
+                {openSections[i] && (
+                  <VStack>
+                    {sec.lessons?.map((lec, j) => {
+                      const key = `${i}-${j}`;
+                      const isActive = activeIndex === key;
+                      const isDone = completed.includes(key);
+
+                      return (
+                        <Pressable
+                          key={j}
+                          onPress={() => goToLesson({ ...lec, key })}
+                        >
+                          <HStack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            px={3}
+                            py={2}
+                            bg={isActive ? "#dee2e6" : "transparent"}
+                          >
+                            <HStack space={2} alignItems="center" flex={1}>
+                              <Ionicons
+                                name={isDone ? "checkmark-circle" : "play-outline"}
+                                size={16}
+                                color={isDone ? "#22c55e" : "#666"}
+                              />
+
+                              <Text fontSize="sm" numberOfLines={1}>
+                                {lec.title}
+                              </Text>
+                            </HStack>
+
+                            <Text fontSize="xs" color="#666">
+                              {lec.duration || "03:54"}
+                            </Text>
+                          </HStack>
+                        </Pressable>
+                      );
+                    })}
+                  </VStack>
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+      </ScrollView>
+
+      {/* 🔥 RIGHT SIDE */}
       <Box flex={1} bg="#f1f5f9">
 
-        {/* 🔥 HEADER */}
+        {/* HEADER */}
         <HStack
           bg="#0f172a"
           px={4}
           py={3}
-          alignItems="center"
           justifyContent="space-between"
+          alignItems="center"
         >
-          <HStack alignItems="center" space={3}>
+          <HStack space={3} alignItems="center">
             <Ionicons name="arrow-back" size={20} color="white" />
-            <Text color="white" fontWeight="bold">
-              {course.title}
-            </Text>
+            <Text color="white">{course.title}</Text>
           </HStack>
 
-          <HStack alignItems="center" space={3}>
+          <HStack space={3} alignItems="center">
             <Pressable
               onPress={() => {
                 if (!completed.includes(activeIndex)) {
@@ -84,28 +179,19 @@ export default function CoursePlayerContent({ isMobile }) {
                 }
               }}
             >
-              <HStack
-                borderWidth={1}
-                borderColor="white"
-                px={3}
-                py={1}
-                borderRadius={6}
-                alignItems="center"
-                space={1}
-              >
-                <Ionicons name="checkmark-circle" size={16} color="white" />
+              <HStack borderWidth={1} borderColor="white" px={3} py={1} borderRadius={5}>
                 <Text color="white">Mark as Complete</Text>
               </HStack>
             </Pressable>
 
-            <Ionicons name="close" size={22} color="white" />
+            <Ionicons name="close" size={20} color="white" />
           </HStack>
         </HStack>
 
-        {/* 🔥 CONTENT SCROLL */}
+        {/* CONTENT */}
         <ScrollView>
 
-          {/* 🎬 VIDEO */}
+          {/* VIDEO */}
           <Box height={isMobile ? 220 : 450} bg="black">
             {video && (
               Platform.OS === "web" ? (
@@ -114,7 +200,6 @@ export default function CoursePlayerContent({ isMobile }) {
                   height="100%"
                   src={`${video}?autoplay=1`}
                   style={{ border: "none" }}
-                  allowFullScreen
                 />
               ) : (
                 <WebView source={{ uri: video }} style={{ flex: 1 }} />
@@ -122,38 +207,24 @@ export default function CoursePlayerContent({ isMobile }) {
             )}
           </Box>
 
-          {/* 📄 DESCRIPTION */}
+          {/* DESCRIPTION */}
           <Box bg="white" p={5}>
-            <Text fontSize="lg" fontWeight="bold" mb={2}>
-              {title}
-            </Text>
-
-            <Text color="#555">
+            <Text fontSize="lg" fontWeight="bold">{title}</Text>
+            <Text mt={2} color="#555">
               The idea of a summary is a short text to prepare students for the
-              activities within the topic or week. The text is shown on the
-              course page under the topic name.
+              activities within the topic or week.
             </Text>
           </Box>
 
-          {/* ⬅️➡️ NAVIGATION */}
-          <HStack
-            justifyContent="center"
-            space={4}
-            py={4}
-            bg="#e2e8f0"
-          >
+          {/* NAV */}
+          <HStack justifyContent="center" space={4} py={4}>
             <Pressable
               onPress={() =>
                 currentIndex > 0 &&
                 goToLesson(flatLessons[currentIndex - 1])
               }
             >
-              <Box
-                px={4}
-                py={2}
-                bg="#cbd5f5"
-                borderRadius={6}
-              >
+              <Box bg="#cbd5f5" px={4} py={2} borderRadius={5}>
                 <Text>← Previous</Text>
               </Box>
             </Pressable>
@@ -164,19 +235,14 @@ export default function CoursePlayerContent({ isMobile }) {
                 goToLesson(flatLessons[currentIndex + 1])
               }
             >
-              <Box
-                px={4}
-                py={2}
-                bg="#cbd5f5"
-                borderRadius={6}
-              >
+              <Box bg="#cbd5f5" px={4} py={2} borderRadius={5}>
                 <Text>Next →</Text>
               </Box>
             </Pressable>
           </HStack>
         </ScrollView>
 
-        {/* 🔝 FLOAT BUTTON */}
+        {/* FLOAT BUTTON */}
         <Pressable
           position="absolute"
           bottom={5}
