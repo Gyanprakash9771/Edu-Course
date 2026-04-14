@@ -189,7 +189,7 @@ export default function CoursePlayerContent({ isMobile }) {
         <ScrollView
           contentContainerStyle={{
             alignItems: "center",
-            paddingTop: 70,
+            paddingTop: 0,
             paddingBottom: 40,
           }}
         >
@@ -197,11 +197,12 @@ export default function CoursePlayerContent({ isMobile }) {
           {/* VIDEO FIXED */}
           <Box
             width="100%"
-            maxWidth={1000}
+            maxWidth={1200}
             height={isMobile ? 220 : 500}
             borderRadius={10}
             overflow="hidden"
             bg="black"
+            mt={-60}
           >
             {video && (
               Platform.OS === "web" ? (
@@ -210,7 +211,7 @@ export default function CoursePlayerContent({ isMobile }) {
                   height="100%"
                   src={`${video}?autoplay=1`}
                   style={{ border: "none" }}
-                  mt={2}
+                
                 />
               ) : (
                 <WebView source={{ uri: video }} style={{ flex: 1 }} />
