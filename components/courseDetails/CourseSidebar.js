@@ -1,7 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Box, Button, HStack, Image, Text, VStack } from "native-base";
+import { useState } from "react";
+import { WebView } from "react-native-webview";
 
 export default function CourseSidebar({ course, isMobile }) {
+
+  const [playVideo, setPlayVideo] = useState(false);
+
   return (
     <Box
       flex={isMobile ? 1 : 0.3}
@@ -15,39 +20,52 @@ export default function CourseSidebar({ course, isMobile }) {
         
       {/* 🎥 VIDEO THUMBNAIL */}
 <Box position="relative">
-  <Image
-    source={{
-      uri: (() => {
-        if (!course?.previewVideo) {
-          return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
-        }
 
-        try {
-          const videoId = course.previewVideo.split("/embed/")[1];
-          return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-        } catch {
-          return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
-        }
-      })(),
-    }}
-    alt="video"
-    height={220}
-    width="100%"
-  />
+  {/* ▶ SHOW VIDEO WHEN CLICKED */}
+  {playVideo && course?.previewVideo ? (
+    <WebView
+      source={{ uri: course.previewVideo }}
+      style={{ height: 220, width: "100%" }}
+    />
+  ) : (
+    <>
+      <Image
+        source={{
+          uri: (() => {
+            if (!course?.previewVideo) {
+              return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
+            }
 
-  {/* ▶ PLAY BUTTON */}
-  <Box
-    position="absolute"
-    top="50%"
-    left="50%"
-    transform={[{ translateX: -25 }, { translateY: -25 }]}
-    bg="red.500"
-    p={3}
-    borderRadius="full"
-    shadow={4}
-  >
-    <Ionicons name="play" size={22} color="white" />
-  </Box>
+            try {
+              const videoId = course.previewVideo.split("/embed/")[1];
+              return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            } catch {
+              return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
+            }
+          })(),
+        }}
+        alt="video"
+        height={220}
+        width="100%"
+      />
+
+      {/* ▶ PLAY BUTTON */}
+      <Box
+        position="absolute"
+        top="50%"
+        left="50%"
+        transform={[{ translateX: -25 }, { translateY: -25 }]}
+        bg="red.500"
+        p={3}
+        borderRadius="full"
+        shadow={4}
+        onTouchEnd={() => setPlayVideo(true)} // ✅ CLICK TO PLAY
+      >
+        <Ionicons name="play" size={22} color="white" />
+      </Box>
+    </>
+  )}
+
 </Box>
 
         {/* 📦 CONTENT */}
