@@ -75,7 +75,7 @@ export default function CoursePlayerContent({ isMobile }) {
           borderColor: "#ddd",
         }}
       >
-        <Box p={2}>
+        <Box px={3} py={3}>
           <Text fontSize="md" mb={2}>Course Content</Text>
 
           {course.sections?.map((sec, i) => {
@@ -85,12 +85,12 @@ export default function CoursePlayerContent({ isMobile }) {
             ).length;
 
             return (
-              <Box key={i} mb={1}>
+              <Box key={i} mb={3}>
                 <Pressable onPress={() => toggleSection(i)}>
                   <HStack
                     justifyContent="space-between"
-                    px={3}
-                    py={2}
+                    px={4}
+                    py={3}
                     bg="#e9ecef"
                   >
                     <Text fontSize="sm" fontWeight="bold">
@@ -117,8 +117,8 @@ export default function CoursePlayerContent({ isMobile }) {
                       return (
                         <Pressable key={j} onPress={() => goToLesson({ ...lec, key })}>
                           <HStack
-                            px={3}
-                            py={2}
+                            px={4}
+                            py={2.5}
                             justifyContent="space-between"
                             bg={isActive ? "#dee2e6" : "transparent"}
                           >
@@ -157,8 +157,8 @@ export default function CoursePlayerContent({ isMobile }) {
           right={0}
           zIndex={10}
           bg="rgba(0,0,0,0.8)"
-          px={5}
-          py={3}
+          px={6}
+          py={3.5}
           justifyContent="space-between"
           alignItems="center"
         >
@@ -186,7 +186,13 @@ export default function CoursePlayerContent({ isMobile }) {
           </HStack>
         </HStack>
 
-        <ScrollView contentContainerStyle={{ alignItems: "center", paddingTop: 60 }}>
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
+            paddingTop: 70,
+            paddingBottom: 40,
+          }}
+        >
 
           {/* VIDEO FIXED */}
           <Box
@@ -204,6 +210,7 @@ export default function CoursePlayerContent({ isMobile }) {
                   height="100%"
                   src={`${video}?autoplay=1`}
                   style={{ border: "none" }}
+                  mt={2}
                 />
               ) : (
                 <WebView source={{ uri: video }} style={{ flex: 1 }} />
@@ -214,8 +221,10 @@ export default function CoursePlayerContent({ isMobile }) {
           {/* CONTENT */}
           <Box
             bg="white"
-            px={8}
-            py={6}
+            px={6}
+            py={5}
+            mt={3}
+            borderRadius={8}
             width="100%"
             maxWidth={1000}
           >
@@ -233,7 +242,9 @@ export default function CoursePlayerContent({ isMobile }) {
           <HStack
             justifyContent="center"
             space={4}
-            py={5}
+            py={6}
+            mt={2}
+            borderBottomRadius={8}
             bg="#e2e8f0"
             width="100%"
             maxWidth={1000}
@@ -255,7 +266,7 @@ export default function CoursePlayerContent({ isMobile }) {
                 goToLesson(flatLessons[currentIndex + 1])
               }
             >
-              <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
+              <Box bg="#cbd5f5" px={6} py={2.5} borderRadius={6}>
                 <Text>Next →</Text>
               </Box>
             </Pressable>
