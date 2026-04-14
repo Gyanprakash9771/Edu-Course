@@ -1,4 +1,4 @@
-// ONLY CHANGES APPLIED → lessonId based logic
+// ONLY UI IMPROVED (NO LOGIC CHANGED)
 
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
@@ -17,13 +17,8 @@ export default function CoursePlayerContent({ isMobile }) {
 
   useEffect(() => {
     if (!id && url) {
-      const extracted = url
-        .split("/course-player/")[1]
-        ?.split("?")[0];
-
-      if (extracted) {
-        setId(extracted);
-      }
+      const extracted = url.split("/course-player/")[1]?.split("?")[0];
+      if (extracted) setId(extracted);
     }
   }, [url]);
 
@@ -45,56 +40,53 @@ export default function CoursePlayerContent({ isMobile }) {
     }));
   };
 
-useEffect(() => {
-  if (!id) return;
+  useEffect(() => {
+    if (!id) return;
 
-  const fetchCourse = async () => {
-    const res = await API.get(`/courses/${id}`);
-    setCourse(res.data);
+    const fetchCourse = async () => {
+      const res = await API.get(`/courses/${id}`);
+      setCourse(res.data);
 
-    const flat = res.data.sections.flatMap(sec => sec.lessons);
+      const flat = res.data.sections.flatMap(sec => sec.lessons);
 
-    try {
-      const USER_ID = "507f1f77bcf86cd799439011"; // ✅ TEMP FIX (same everywhere)
+      try {
+        const USER_ID = "507f1f77bcf86cd799439011";
 
-      const progressRes = await API.get(`/progress/${USER_ID}/${id}`);
-      const progress = progressRes.data;
+        const progressRes = await API.get(`/progress/${USER_ID}/${id}`);
+        const progress = progressRes.data;
 
-      // ✅ normalize completed lessons
-      if (progress?.completedLessons) {
-        const normalized = progress.completedLessons.map(p => p.toString());
-        setCompleted(normalized);
-      }
-
-      // ✅ fix last lesson match
-      if (progress?.lastLesson) {
-        const last = flat.find(
-          l => l.lessonId.toString() === progress.lastLesson.toString()
-        );
-
-        if (last) {
-          setVideo(last.video);
-          setTitle(last.title);
-          setActiveIndex(last.lessonId);
-          return;
+        if (progress?.completedLessons) {
+          const normalized = progress.completedLessons.map(p => p.toString());
+          setCompleted(normalized);
         }
+
+        if (progress?.lastLesson) {
+          const last = flat.find(
+            l => l.lessonId.toString() === progress.lastLesson.toString()
+          );
+
+          if (last) {
+            setVideo(last.video);
+            setTitle(last.title);
+            setActiveIndex(last.lessonId);
+            return;
+          }
+        }
+      } catch {
+        console.log("No progress found");
       }
 
-    } catch (err) {
-      console.log("No progress found");
-    }
+      const first = flat[0];
+      if (first) {
+        setVideo(first.video);
+        setTitle(first.title);
+        setActiveIndex(first.lessonId);
+      }
+    };
 
-    // ✅ fallback
-    const first = flat[0];
-    if (first) {
-      setVideo(first.video);
-      setTitle(first.title);
-      setActiveIndex(first.lessonId);
-    }
-  };
+    fetchCourse();
+  }, [id]);
 
-  fetchCourse();
-}, [id]);
   if (!course) {
     return <Text mt={5} textAlign="center">Loading...</Text>;
   }
@@ -102,7 +94,7 @@ useEffect(() => {
   const flatLessons = course.sections.flatMap((sec) =>
     sec.lessons.map((lec) => ({
       ...lec,
-      key: lec.lessonId, // ✅ FIX
+      key: lec.lessonId,
     }))
   );
 
@@ -114,13 +106,15 @@ useEffect(() => {
     setVideo("");
     setTimeout(() => setVideo(lesson.video), 50);
     setTitle(lesson.title);
-    setActiveIndex(lesson.lessonId); // ✅ FIX
+    setActiveIndex(lesson.lessonId);
   };
 
   return (
     <Box flexDirection="row" flex={1} bg="#f1f5f9">
 
+      {/* ================= SIDEBAR ================= */}
       <ScrollView
+        showsVerticalScrollIndicator={false}
         style={{
           width: 320,
           minWidth: 320,
@@ -131,87 +125,93 @@ useEffect(() => {
         }}
       >
         <Box px={3} py={3}>
-          <Text fontSize="md" mb={2}>Course Content</Text>
+          <Text fontSize="md" mb={3} fontWeight="bold">
+            Course Content
+          </Text>
 
           {course.sections?.map((sec, i) => {
             const total = sec.lessons?.length || 0;
             const done = sec.lessons.filter((lec) =>
-              completed.some(id => id.toString() === lec.lessonId.toString()) // ✅ FIX
+              completed.some(id => id.toString() === lec.lessonId.toString())
             ).length;
 
             return (
-              <Box key={i} mb={3}>
+              <Box key={i} mb={4}>
+
+                {/* SECTION HEADER */}
                 <Pressable onPress={() => toggleSection(i)}>
                   <HStack
                     justifyContent="space-between"
                     px={4}
                     py={3}
-                    bg="#e9ecef"
+                    bg="#f1f5f9"
+                    borderRadius={6}
                   >
                     <Text fontSize="sm" fontWeight="bold">
                       {sec.title}
                     </Text>
 
-                    <HStack space={2}>
-                      <Text fontSize="xs">{done}/{total}</Text>
-                      <Ionicons
-                        name={openSections[i] ? "chevron-up" : "chevron-down"}
-                        size={14}
-                      />
-                    </HStack>
+                    <Text fontSize="xs" color="#6b7280">
+                      {done}/{total}
+                    </Text>
                   </HStack>
                 </Pressable>
 
+                {/* PROGRESS BAR */}
+                <Box px={4} mt={1} mb={2}>
+                  <Box bg="#e5e7eb" height={3} borderRadius={3}>
+                    <Box
+                      bg="#22c55e"
+                      height={3}
+                      borderRadius={3}
+                      width={`${total ? (done / total) * 100 : 0}%`}
+                    />
+                  </Box>
+                </Box>
+
+                {/* LESSONS */}
                 {openSections[i] && (
                   <VStack>
-                    {sec.lessons?.map((lec, j) => {
-                      const isActive = activeIndex === lec.lessonId; // ✅ FIX
+                    {sec.lessons?.map((lec) => {
+                      const isActive = activeIndex === lec.lessonId;
                       const isDone = completed.some(
                         id => id.toString() === lec.lessonId.toString()
-                      ); // ✅ FIX
+                      );
 
                       return (
                         <Pressable
                           key={lec.lessonId}
-                          onPress={() => goToLesson(lec)} // ✅ FIX
+                          onPress={() => goToLesson(lec)}
                         >
                           <HStack
                             alignItems="center"
                             justifyContent="space-between"
                             px={4}
-                            py={2.5}
-                            bg={isActive ? "#eef6f3" : "transparent"}
+                            py={3}
+                            borderRadius={6}
+                            bg={isActive ? "#dcfce7" : "transparent"}
                           >
 
                             <HStack alignItems="center" space={2} flex={1}>
                               <Ionicons
-                                name="play-outline"
-                                size={14}
-                                color={isActive ? "#22c55e" : "#9ca3af"}
+                                name={isDone ? "checkmark-circle" : "play-circle-outline"}
+                                size={18}
+                                color={isDone ? "#22c55e" : "#9ca3af"}
                               />
 
                               <Text
                                 fontSize="sm"
                                 numberOfLines={1}
-                                color={isActive ? "#22c55e" : "#374151"}
+                                fontWeight={isActive ? "bold" : "normal"}
+                                color={isActive ? "#16a34a" : "#374151"}
                               >
                                 {lec.title}
                               </Text>
                             </HStack>
 
-                            <HStack alignItems="center" space={2}>
-                              <Text fontSize="xs" color="#6b7280">
-                                {lec.time || "03:54"}
-                              </Text>
-
-                              {isDone && (
-                                <Ionicons
-                                  name="checkmark-circle"
-                                  size={16}
-                                  color="#22c55e"
-                                />
-                              )}
-                            </HStack>
+                            <Text fontSize="xs" color="#6b7280">
+                              {lec.time || "03:54"}
+                            </Text>
 
                           </HStack>
                         </Pressable>
@@ -225,8 +225,10 @@ useEffect(() => {
         </Box>
       </ScrollView>
 
+      {/* ================= RIGHT SIDE (UNCHANGED) ================= */}
       <Box flex={1}>
 
+        {/* HEADER */}
         <HStack
           position="absolute"
           top={0}
@@ -250,15 +252,12 @@ useEffect(() => {
             <Pressable
               onPress={async () => {
                 if (!completed.some(id => id.toString() === activeIndex.toString())) {
-
-                  // ✅ update UI instantly
                   setCompleted([...completed, activeIndex]);
 
                   try {
-                    // ✅ SAVE TO BACKEND
                     const USER_ID = "507f1f77bcf86cd799439011";
                     await API.post("/progress", {
-                      userId: USER_ID, // 🔥 replace later with real user
+                      userId: USER_ID,
                       courseId: id,
                       lessonId: activeIndex,
                     });
@@ -268,13 +267,7 @@ useEffect(() => {
                 }
               }}
             >
-              <Box
-                borderWidth={1}
-                borderColor="white"
-                px={3}
-                py={1}
-                borderRadius={6}
-              >
+              <Box borderWidth={1} borderColor="white" px={3} py={1} borderRadius={6}>
                 <Text color="white">Mark as Complete</Text>
               </Box>
             </Pressable>
@@ -285,12 +278,7 @@ useEffect(() => {
 
         <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-          <Box
-            width="100%"
-            height={isMobile ? 260 : 650}
-            mt={-60}
-            bg="black"
-          >
+          <Box width="100%" height={isMobile ? 260 : 650} mt={-60} bg="black">
             {video && (
               Platform.OS === "web" ? (
                 <iframe
@@ -305,35 +293,15 @@ useEffect(() => {
             )}
           </Box>
 
-          <Box
-            bg="white"
-            px={6}
-            py={5}
-            mt={3}
-            borderRadius={8}
-            width="100%"
-            maxWidth={1000}
-          >
-            <Text fontSize="xl" fontWeight="bold">
-              {title}
-            </Text>
-
+          <Box bg="white" px={6} py={5} mt={3} borderRadius={8} width="100%" maxWidth={1000}>
+            <Text fontSize="xl" fontWeight="bold">{title}</Text>
             <Text mt={3} color="#555">
               The idea of a summary is a short text to prepare students for the
               activities within the topic or week.
             </Text>
           </Box>
 
-          <HStack
-            justifyContent="center"
-            space={4}
-            py={6}
-            mt={2}
-            borderBottomRadius={8}
-            bg="#e2e8f0"
-            width="100%"
-            maxWidth={1000}
-          >
+          <HStack justifyContent="center" space={4} py={6} mt={2} bg="#e2e8f0" width="100%" maxWidth={1000}>
             <Pressable
               onPress={() =>
                 currentIndex > 0 &&
@@ -356,6 +324,7 @@ useEffect(() => {
               </Box>
             </Pressable>
           </HStack>
+
         </ScrollView>
       </Box>
     </Box>
