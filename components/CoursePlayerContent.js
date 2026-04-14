@@ -5,11 +5,16 @@ import { useRoute } from "@react-navigation/native";
 import * as Linking from "expo-linking";
 import { Box, HStack, Pressable, Text, VStack } from "native-base";
 import { useEffect, useState } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Platform, ScrollView, useWindowDimensions } from "react-native";
 import { WebView } from "react-native-webview";
 import API from "../services/api";
 
 export default function CoursePlayerContent({ isMobile }) {
+  const { width } = useWindowDimensions();
+
+const isMobileScreen = width < 768;
+const isTabletScreen = width >= 768 && width < 1024;
+
   const route = useRoute();
   const url = Linking.useURL();
 
@@ -146,15 +151,20 @@ const progressPercent = totalLessonsCount
   : 0;
 
   return (
-    <Box flexDirection="row" flex={1} bg="#f1f5f9">
+    <Box
+  flexDirection={isMobileScreen ? "column" : "row"}
+  flex={1}
+  bg="#f1f5f9"
+>
 
       {/* ================= SIDEBAR ================= */}
+      {!isMobileScreen && (
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{
-          width: 320,
-          minWidth: 320,
-          maxWidth: 320,
+          width: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
+minWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
+maxWidth: isMobileScreen ? "100%" : isTabletScreen ? 280 : 320,
           backgroundColor: "#f8f9fa",
           borderRightWidth: 1,
           borderColor: "#ddd",
@@ -285,6 +295,7 @@ const progressPercent = totalLessonsCount
           })}
         </Box>
       </ScrollView>
+      )}
 
       {/* ================= RIGHT SIDE (UNCHANGED) ================= */}
       <Box flex={1}>
@@ -339,54 +350,129 @@ const progressPercent = totalLessonsCount
 
         <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-          <Box width="100%" height={isMobile ? 260 : 650} mt={-60} bg="black">
-            {video && (
-              Platform.OS === "web" ? (
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`${video}?autoplay=1`}
-                  style={{ border: "none" }}
-                />
-              ) : (
-                <WebView source={{ uri: video }} style={{ flex: 1 }} />
-              )
-            )}
-          </Box>
+  {/* VIDEO */}
+  <Box
+    width="100%"
+    height={isMobileScreen ? 220 : isTabletScreen ? 350 : 650}
+    mt={isMobileScreen ? 0 : -60}
+    bg="black"
+  >
+    {video && (
+      Platform.OS === "web" ? (
+        <iframe
+          width="100%"
+          height="100%"
+          src={`${video}?autoplay=1`}
+          style={{ border: "none" }}
+        />
+      ) : (
+        <WebView source={{ uri: video }} style={{ flex: 1 }} />
+      )
+    )}
+  </Box>
 
-          <Box bg="white" px={6} py={5} mt={3} borderRadius={8} width="100%" maxWidth={1000}>
-            <Text fontSize="xl" fontWeight="bold">{title}</Text>
-            <Text mt={3} color="#555">
-              The idea of a summary is a short text to prepare students for the
-              activities within the topic or week.
-            </Text>
-          </Box>
+  {/* ✅ ADD THIS BLOCK (MOBILE SIDEBAR) */}
+  {isMobileScreen && (
+    <Box
+      bg="#f8f9fa"
+      borderTopWidth={1}
+      borderColor="#ddd"
+      px={3}
+      py={3}
+    >
+      <Text fontSize="md" mb={2} fontWeight="bold">
+        Course Content
+      </Text>
 
-          <HStack justifyContent="center" space={4} py={6} mt={2} bg="#e2e8f0" width="100%" maxWidth={1000}>
-            <Pressable
-              onPress={() =>
-                currentIndex > 0 &&
-                goToLesson(flatLessons[currentIndex - 1])
-              }
-            >
-              <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
-                <Text>← Previous</Text>
-              </Box>
+      <Text fontSize="xs" mb={2} color="#16a34a">
+        {progressPercent}% Completed
+      </Text>
+
+      {course.sections?.map((sec, i) => {
+        const total = sec.lessons?.length || 0;
+        const done = sec.lessons.filter((lec) =>
+          completed.some(id => id.toString() === lec.lessonId.toString())
+        ).length;
+
+        return (
+          <Box key={i} mb={3}>
+            <Pressable onPress={() => toggleSection(i)}>
+              <HStack justifyContent="space-between">
+                <Text fontWeight="bold">{sec.title}</Text>
+                <Text fontSize="xs">{done}/{total}</Text>
+              </HStack>
             </Pressable>
 
-            <Pressable
-              onPress={() =>
-                currentIndex < flatLessons.length - 1 &&
-                goToLesson(flatLessons[currentIndex + 1])
-              }
-            >
-              <Box bg="#cbd5f5" px={6} py={2.5} borderRadius={6}>
-                <Text>Next →</Text>
-              </Box>
-            </Pressable>
-          </HStack>
+            {openSections[i] &&
+              sec.lessons.map((lec) => (
+                <Pressable
+                  key={lec.lessonId}
+                  onPress={() => goToLesson(lec)}
+                >
+                  <HStack justifyContent="space-between" py={2}>
+                    <Text numberOfLines={1}>{lec.title}</Text>
+                    <Text fontSize="xs">{lec.time}</Text>
+                  </HStack>
+                </Pressable>
+              ))}
+          </Box>
+        );
+      })}
+    </Box>
+  )}
 
-        </ScrollView>
+  {/* CONTENT */}
+  <Box
+    bg="white"
+    px={6}
+    py={5}
+    mt={3}
+    borderRadius={8}
+    width="100%"
+    maxWidth={1000}
+  >
+    <Text fontSize="xl" fontWeight="bold">{title}</Text>
+
+    <Text mt={3} color="#555">
+      The idea of a summary is a short text to prepare students for the
+      activities within the topic or week.
+    </Text>
+  </Box>
+
+  {/* NAV */}
+  <HStack
+    justifyContent="center"
+    space={4}
+    py={6}
+    mt={2}
+    bg="#e2e8f0"
+    width="100%"
+    maxWidth={1000}
+  >
+    <Pressable
+      onPress={() =>
+        currentIndex > 0 &&
+        goToLesson(flatLessons[currentIndex - 1])
+      }
+    >
+      <Box bg="#cbd5f5" px={5} py={2} borderRadius={6}>
+        <Text>← Previous</Text>
+      </Box>
+    </Pressable>
+
+    <Pressable
+      onPress={() =>
+        currentIndex < flatLessons.length - 1 &&
+        goToLesson(flatLessons[currentIndex + 1])
+      }
+    >
+      <Box bg="#cbd5f5" px={6} py={2.5} borderRadius={6}>
+        <Text>Next →</Text>
+      </Box>
+    </Pressable>
+  </HStack>
+
+</ScrollView>
       </Box>
     </Box>
   );
