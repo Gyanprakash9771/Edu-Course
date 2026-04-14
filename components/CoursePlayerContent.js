@@ -14,7 +14,7 @@ export default function CoursePlayerContent({ isMobile }) {
   const [video, setVideo] = useState("");
   const [title, setTitle] = useState("");
   const [activeIndex, setActiveIndex] = useState(null);
-  const [completed, setCompleted] = useState([]); // ✅ NEW
+  const [completed, setCompleted] = useState([]); 
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -36,7 +36,6 @@ export default function CoursePlayerContent({ isMobile }) {
     return <Text mt={5} textAlign="center">Loading...</Text>;
   }
 
-  // ✅ TOTAL PROGRESS
   const totalLessons =
     course.sections?.reduce(
       (acc, sec) => acc + (sec.lessons?.length || 0),
@@ -47,7 +46,6 @@ export default function CoursePlayerContent({ isMobile }) {
     ? Math.round((completed.length / totalLessons) * 100)
     : 0;
 
-  // ✅ FLATTEN LESSONS (for next/prev)
   const flatLessons = course.sections.flatMap((sec, i) =>
     sec.lessons.map((lec, j) => ({
       ...lec,
@@ -64,16 +62,11 @@ export default function CoursePlayerContent({ isMobile }) {
     setTimeout(() => setVideo(lesson.video), 50);
     setTitle(lesson.title);
     setActiveIndex(lesson.key);
-
-    if (!completed.includes(lesson.key)) {
-      setCompleted([...completed, lesson.key]);
-    }
   };
 
   return (
     <Box flexDirection={isMobile ? "column" : "row"}>
 
-      {/* LEFT PANEL */}
       <ScrollView
         style={{
           width: isMobile ? "100%" : "30%",
@@ -111,9 +104,9 @@ export default function CoursePlayerContent({ isMobile }) {
                         space={3}
                         p={3}
                         borderRadius={8}
-                        bg={isActive ? "#43b39c" : "white"}
+                        bg={isDone ? "#d1fae5" : "white"}
                         borderWidth={1}
-                        borderColor={isActive ? "#43b39c" : "#e5e5e5"}
+                        borderColor={isDone ? "#22c55e" : "#e5e5e5"}
                       >
                         <Ionicons
                           name={
@@ -125,15 +118,13 @@ export default function CoursePlayerContent({ isMobile }) {
                           color={
                             isDone
                               ? "#22c55e"
-                              : isActive
-                              ? "white"
                               : "#43b39c"
                           }
                         />
 
                         <Text
                           flex={1}
-                          color={isActive ? "white" : "black"}
+                          color="black"
                           fontWeight={isActive ? "bold" : "normal"}
                         >
                           {lec.title}
@@ -148,13 +139,11 @@ export default function CoursePlayerContent({ isMobile }) {
         </Box>
       </ScrollView>
 
-      {/* RIGHT SIDE */}
       <Box
         style={{ width: isMobile ? "100%" : "70%" }}
         p={isMobile ? 3 : 5}
       >
 
-        {/* ✅ PROGRESS BAR */}
         <Box mb={4}>
           <Text bold mb={1}>
             Progress: {progressPercent}%
@@ -169,7 +158,6 @@ export default function CoursePlayerContent({ isMobile }) {
           </Box>
         </Box>
 
-        {/* VIDEO */}
         <Box
           height={isMobile ? 250 : 500}
           borderRadius={12}
@@ -200,14 +188,34 @@ export default function CoursePlayerContent({ isMobile }) {
           )}
         </Box>
 
-        {/* TITLE */}
         <Box mt={4}>
           <Text fontSize="xl" fontWeight="bold">
             {title}
           </Text>
         </Box>
 
-        {/* ✅ NEXT / PREV */}
+        {/* ✅ MARK COMPLETE BUTTON */}
+        <Box mt={3}>
+          <Pressable
+            onPress={() => {
+              if (!completed.includes(activeIndex)) {
+                setCompleted([...completed, activeIndex]);
+              }
+            }}
+          >
+            <Box
+              bg="#22c55e"
+              p={3}
+              borderRadius={8}
+              alignItems="center"
+            >
+              <Text color="white" bold>
+                Mark as Completed
+              </Text>
+            </Box>
+          </Pressable>
+        </Box>
+
         <HStack justifyContent="space-between" mt={4}>
           <Pressable
             onPress={() =>
