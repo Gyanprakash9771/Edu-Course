@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Box, Button, HStack, Image, Text, VStack } from "native-base";
 import { useState } from "react";
-import { Pressable } from "react-native";
+import { Platform, Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 
 export default function CourseSidebar({ course, isMobile }) {
@@ -23,12 +23,21 @@ export default function CourseSidebar({ course, isMobile }) {
 <Box position="relative">
 
   {/* ▶ SHOW VIDEO WHEN CLICKED */}
-  {playVideo && course?.previewVideo ? (
+{playVideo && course?.previewVideo ? (
+  Platform.OS === "web" ? (
+    <iframe
+      src={course.previewVideo}
+      style={{ height: 220, width: "100%", border: "none" }}
+      allow="autoplay; encrypted-media"
+      allowFullScreen
+    />
+  ) : (
     <WebView
       source={{ uri: course.previewVideo }}
       style={{ height: 220, width: "100%" }}
     />
-  ) : (
+  )
+) : (
     <>
       <Image
         source={{
