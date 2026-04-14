@@ -67,7 +67,7 @@ export default function CoursePlayerContent({ isMobile }) {
       {/* 🔥 SIDEBAR */}
       <ScrollView
         style={{
-          width: isMobile ? "100%" : 200,
+          width: isMobile ? "100%" : 100,
           backgroundColor: "#f8f9fa",
           borderRightWidth: isMobile ? 0 : 1,
           borderColor: "#ddd",
