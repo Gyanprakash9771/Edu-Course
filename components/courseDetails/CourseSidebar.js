@@ -12,14 +12,23 @@ export default function CourseSidebar({ course, isMobile }) {
       {/* ================= MAIN CARD ================= */}
       <Box bg="white" borderRadius="2xl" shadow={6} overflow="hidden">
 
-        {/* 🎥 VIDEO THUMBNAIL */}
-        {/* 🎥 VIDEO THUMBNAIL */}
+        
+      {/* 🎥 VIDEO THUMBNAIL */}
 <Box position="relative">
   <Image
     source={{
-      uri: course?.previewVideo
-        ? `https://img.youtube.com/vi/${course.previewVideo.split("/embed/")[1]}/maxresdefault.jpg`
-        : "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg",
+      uri: (() => {
+        if (!course?.previewVideo) {
+          return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
+        }
+
+        try {
+          const videoId = course.previewVideo.split("/embed/")[1];
+          return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        } catch {
+          return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
+        }
+      })(),
     }}
     alt="video"
     height={220}
