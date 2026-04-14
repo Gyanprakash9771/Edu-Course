@@ -188,7 +188,7 @@ export default function CoursePlayerContent({ isMobile }) {
 
         <ScrollView
           contentContainerStyle={{
-            alignItems: "center",
+            
             paddingTop: 0,
             paddingBottom: 40,
           }}
@@ -200,22 +200,14 @@ export default function CoursePlayerContent({ isMobile }) {
   height={isMobile ? 260 : 650}
   mt={-60}
   bg="black"
-  overflow="hidden"
-  position="relative"
 >
   {video && (
     Platform.OS === "web" ? (
       <iframe
-        src={`${video}?autoplay=1&controls=0&modestbranding=1`}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          width: "177.77%",   // 🔥 MAGIC NUMBER (16:9 cover)
-          height: "100%",
-          transform: "translate(-50%, -50%)",
-          border: "none",
-        }}
+        width="100%"
+        height="100%"
+        src={`${video}?autoplay=1`}
+        style={{ border: "none" }}
       />
     ) : (
       <WebView source={{ uri: video }} style={{ flex: 1 }} />
