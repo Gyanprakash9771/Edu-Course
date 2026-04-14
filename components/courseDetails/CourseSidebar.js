@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Box, Button, HStack, Image, Text, VStack } from "native-base";
 import { useState } from "react";
+import { Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 
 export default function CourseSidebar({ course, isMobile }) {
@@ -50,19 +51,21 @@ export default function CourseSidebar({ course, isMobile }) {
       />
 
       {/* ▶ PLAY BUTTON */}
-      <Box
-        position="absolute"
-        top="50%"
-        left="50%"
-        transform={[{ translateX: -25 }, { translateY: -25 }]}
-        bg="red.500"
-        p={3}
-        borderRadius="full"
-        shadow={4}
-        onTouchEnd={() => setPlayVideo(true)} // ✅ CLICK TO PLAY
+      <Pressable
+        onPress={() => setPlayVideo(true)}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: [{ translateX: -25 }, { translateY: -25 }],
+          backgroundColor: "#ef4444",
+          padding: 12,
+          borderRadius: 50,
+          elevation: 4,
+        }}
       >
         <Ionicons name="play" size={22} color="white" />
-      </Box>
+      </Pressable>
     </>
   )}
 
