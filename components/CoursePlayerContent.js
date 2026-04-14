@@ -271,16 +271,7 @@ export default function CoursePlayerContent({ isMobile }) {
         </ScrollView>
 
         {/* FLOAT BUTTON */}
-        <Pressable
-          position="absolute"
-          bottom={20}
-          right={20}
-          bg="#22c55e"
-          p={3}
-          borderRadius={50}
-        >
-          <Ionicons name="arrow-up" size={20} color="white" />
-        </Pressable>
+        
       </Box>
     </Box>
   );
