@@ -14,15 +14,24 @@ export default function CoursePlayerScreen() {
   return (
     <Box flex={1}>
 
-      
       <Navbar />
       <MainNavbar isMobile={isMobile} />
 
-      
       <ScrollView>
-        <CoursePlayerHero  isMobile={isMobile} />
-        <CoursePlayerContent isMobile={isMobile} />
-        <CourseFooter/>
+
+        {/* HERO */}
+        <CoursePlayerHero isMobile={isMobile} />
+
+        {/* 🔥 SPACE BETWEEN HERO & PLAYER */}
+        <Box mt={10}>
+          <CoursePlayerContent isMobile={isMobile} />
+        </Box>
+
+        {/* 🔥 SPACE BETWEEN PLAYER & FOOTER */}
+        <Box mt={10}>
+          <CourseFooter />
+        </Box>
+
       </ScrollView>
 
     </Box>
