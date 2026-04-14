@@ -124,9 +124,9 @@ export default function CourseGrid({ isMobile }) {
                 📚 {course.lessons} Lessons
               </Text>
 
-              <Text fontSize="sm">
-                By : <Text color="#43b39c">varshik</Text>
-              </Text>
+<Text fontSize="sm">
+  By : <Text color="#43b39c">{course.instructor}</Text>
+</Text>
 
               <Text color="red.500" fontWeight="bold" fontSize="md">
                 Free
