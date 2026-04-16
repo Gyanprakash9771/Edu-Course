@@ -41,7 +41,7 @@ export default function CourseGrid({ isMobile }) {
             borderRadius="xl"
             overflow="hidden"
             shadow={2}
-            minHeight={360} // ✅ equal height fix
+            minHeight={420} // ✅ equal height fix
           >
             <Pressable
               onPress={() =>
@@ -67,7 +67,7 @@ export default function CourseGrid({ isMobile }) {
                   py={1}
                   borderRadius="md"
                 >
-                  <Text color="white" fontSize="xs" fontWeight="bold">
+                  <Text color="white" fontSize="md" fontWeight="bold">
                     {course.category?.name || course.category}
                   </Text>
                 </Box>
@@ -97,12 +97,12 @@ export default function CourseGrid({ isMobile }) {
                     navigation.navigate("CourseDetails", { id: course._id })
                   }
                 >
-                  <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
+                  <Text fontWeight="bold" fontSize="lg" numberOfLines={2}>
                     {course.title}
                   </Text>
                 </Pressable>
 
-                <Text color="orange.400" fontSize="xs">
+                <Text color="orange.400" fontSize="md">
                   ★★★★★ <Text color="gray.500">(5.0)</Text>
                 </Text>
 
@@ -110,10 +110,10 @@ export default function CourseGrid({ isMobile }) {
                 <HStack alignItems="center" space={2}>
                   <Ionicons
                     name="person-circle-outline"
-                    size={16}
+                    size={20}
                     color="gray"
                   />
-                  <Text fontSize="xs" color="gray.500">
+                  <Text fontSize="md" color="gray.500">
                     {course.instructor}
                   </Text>
                 </HStack>
@@ -124,11 +124,11 @@ export default function CourseGrid({ isMobile }) {
 
               {/* BOTTOM SECTION */}
               <HStack justifyContent="space-between" alignItems="center">
-                <Text fontSize="xs" color="gray.500">
+                <Text fontSize="md" color="gray.500">
                   📚 {course.lessons} Lessons
                 </Text>
 
-                <Text color="#43b39c" fontWeight="bold" fontSize="sm">
+                <Text color="#43b39c" fontWeight="bold" fontSize="md">
                   Free
                 </Text>
               </HStack>
