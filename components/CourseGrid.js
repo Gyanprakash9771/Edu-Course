@@ -36,91 +36,91 @@ export default function CourseGrid({ isMobile }) {
       <HStack flexWrap="wrap" justifyContent="center">
         {currentCourses.map((course) => (
           <Box
-  key={course._id}
-  width={{ base: "100%", sm: "48%", md: "30%" }}
-  mx={{ base: 0, sm: "1%", md: "1.5%" }}
-  mb={6}
-  bg="white"
-  borderRadius="xl"
-  overflow="hidden"
-  shadow={2}
->
-  <Pressable
-    onPress={() =>
-      navigation.navigate("CourseDetails", { id: course._id })
-    }
-  >
-    {/* IMAGE */}
-    <Box position="relative">
-      <Image
-        source={{ uri: `${BASE_URL}/uploads/${course.image}` }}
-        alt="course"
-        height={180}
-        width="100%"
-      />
+            key={course._id}
+            width={{ base: "100%", sm: "48%", md: "30%" }}
+            mx={{ base: 0, sm: "1%", md: "1.5%" }}
+            mb={6}
+            bg="white"
+            borderRadius="xl"
+            overflow="hidden"
+            shadow={2}
+          >
+            <Pressable
+              onPress={() =>
+                navigation.navigate("CourseDetails", { id: course._id })
+              }
+            >
+              {/* IMAGE */}
+              <Box position="relative">
+                <Image
+                  source={{ uri: `${BASE_URL}/uploads/${course.image}` }}
+                  alt="course"
+                  height={180}
+                  width="100%"
+                />
 
-      {/* LEVEL TAG */}
-      <Box
-        position="absolute"
-        top={3}
-        left={3}
-        bg="#43b39c"
-        px={3}
-        py={1}
-        borderRadius="md"
-      >
-        <Text color="white" fontSize="xs" fontWeight="bold">
-          {course.level}
-        </Text>
-      </Box>
+                {/* LEVEL TAG */}
+                <Box
+                  position="absolute"
+                  top={3}
+                  left={3}
+                  bg="#43b39c"
+                  px={3}
+                  py={1}
+                  borderRadius="md"
+                >
+                  <Text color="white" fontSize="xs" fontWeight="bold">
+                    {course.category}
+                  </Text>
+                </Box>
 
-      {/* BOOKMARK */}
-      <Box
-        position="absolute"
-        top={3}
-        right={3}
-        bg="white"
-        p={2}
-        borderRadius="full"
-        shadow={1}
-      >
-        <Ionicons name="bookmark-outline" size={16} />
-      </Box>
-    </Box>
-  </Pressable>
+                {/* BOOKMARK */}
+                <Box
+                  position="absolute"
+                  top={3}
+                  right={3}
+                  bg="white"
+                  p={2}
+                  borderRadius="full"
+                  shadow={1}
+                >
+                  <Ionicons name="bookmark-outline" size={16} />
+                </Box>
+              </Box>
+            </Pressable>
 
-  {/* CONTENT */}
-  <VStack p={4} space={2}>
-    <Text color="#43b39c" fontSize="xs">
-      {course.category?.name || course.category}
-    </Text>
+            {/* CONTENT */}
+            <VStack p={4} space={2}>
+              <Text color="#43b39c" fontSize="xs">
+                {course.category?.name || course.category}
+              </Text>
 
-    <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
-      {course.title}
-    </Text>
+              <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
+                {course.title}
+              </Text>
 
-    {/* RATING */}
-    <Text color="orange.400" fontSize="xs">
-      ★★★★★ <Text color="gray.500">(5.0)</Text>
-    </Text>
+              {/* RATING */}
+              <Text color="orange.400" fontSize="xs">
+                ★★★★★ <Text color="gray.500">(5.0)</Text>
+              </Text>
 
-    {/* LESSONS + PRICE */}
-    <HStack justifyContent="space-between" alignItems="center">
-      <Text fontSize="xs" color="gray.500">
-        📚 {course.lessons} Lessons
-      </Text>
+              {/* LESSONS + PRICE */}
+              <HStack justifyContent="space-between" alignItems="center">
+                <Text fontSize="xs" color="gray.500">
+                  📚 {course.lessons} Lessons
+                </Text>
 
-      <Text color="#43b39c" fontWeight="bold" fontSize="sm">
-        Free
-      </Text>
-    </HStack>
+                <Text color="#43b39c" fontWeight="bold" fontSize="sm">
+                  Free
+                </Text>
+              </HStack>
 
-    {/* INSTRUCTOR */}
-    <Text fontSize="xs" color="gray.500">
-      {course.instructor}
-    </Text>
-  </VStack>
-</Box>
+              {/* INSTRUCTOR */}
+              <Text fontSize="xs" color="gray.500">
+                {course.instructor}
+              </Text>
+            </VStack>
+          </Box>
         ))}
       </HStack>
 
