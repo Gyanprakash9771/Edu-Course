@@ -91,8 +91,8 @@ export default function CourseGrid({ isMobile }) {
 
             {/* CONTENT */}
             <VStack p={4} space={2}>
-              <Text color="#43b39c" fontSize="xs">
-                {course.category?.name || course.category}
+              <Text color="orange.400" fontSize="xs">
+                ★★★★★ <Text color="gray.500">(5.0)</Text>
               </Text>
 
               <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
@@ -100,9 +100,7 @@ export default function CourseGrid({ isMobile }) {
               </Text>
 
               {/* RATING */}
-              <Text color="orange.400" fontSize="xs">
-                ★★★★★ <Text color="gray.500">(5.0)</Text>
-              </Text>
+              
 
               {/* LESSONS + PRICE */}
               <HStack justifyContent="space-between" alignItems="center">
