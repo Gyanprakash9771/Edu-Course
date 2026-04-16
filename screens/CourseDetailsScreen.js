@@ -11,7 +11,7 @@ import CourseHero from "../components/courseDetails/CourseHero";
 import CourseMainContent from "../components/courseDetails/CourseMainContent";
 import CourseSidebar from "../components/courseDetails/CourseSidebar";
 import RelatedCourses from "../components/courseDetails/RelatedCourses";
-import API from "../services/api"; // ✅ NEW
+import API from "../services/api";
 
 export default function CourseDetailsScreen() {
   const { width } = useWindowDimensions();
@@ -29,13 +29,13 @@ export default function CourseDetailsScreen() {
       if (match) {
         id = match[1];
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
-  const [course, setCourse] = useState(null); // ✅ NEW
+  const [course, setCourse] = useState(null);
   const [authOpen, setAuthOpen] = useState(false);
 
-  // ✅ SCROLL + FETCH
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
 
@@ -46,7 +46,7 @@ export default function CourseDetailsScreen() {
       .catch((err) => console.log(err));
   }, [id]);
 
-  // ✅ LOADING FIX
+
   if (!course) return null;
 
   return (
@@ -57,7 +57,7 @@ export default function CourseDetailsScreen() {
       </Box>
 
       <ScrollView ref={scrollRef}>
-        
+
         <CourseHero course={course} isMobile={isMobile} />
 
         <Box px={isMobile ? 4 : 10} py={8}>
@@ -67,10 +67,10 @@ export default function CourseDetailsScreen() {
             alignItems="flex-start"
           >
             <Box w={isMobile ? "100%" : "65%"}>
-              <CourseMainContent 
-  isMobile={isMobile} 
-  course={course}
-/>
+              <CourseMainContent
+                isMobile={isMobile}
+                course={course}
+              />
             </Box>
 
             <Box
@@ -84,11 +84,11 @@ export default function CourseDetailsScreen() {
           </HStack>
         </Box>
 
-        <RelatedCourses 
-          isMobile={isMobile} 
-          currentCourseId={course._id}   // ✅ FIXED
+        <RelatedCourses
+          isMobile={isMobile}
+          currentCourseId={course._id}
         />
-        <CourseFooter/>
+        <CourseFooter />
       </ScrollView>
 
       <AuthModal

@@ -18,67 +18,67 @@ export default function CourseSidebar({ course, isMobile }) {
       {/* ================= MAIN CARD ================= */}
       <Box bg="white" borderRadius="2xl" shadow={6} overflow="hidden">
 
-        
-      {/* 🎥 VIDEO THUMBNAIL */}
-<Box position="relative">
 
-  {/* ▶ SHOW VIDEO WHEN CLICKED */}
-{playVideo && course?.previewVideo ? (
-  Platform.OS === "web" ? (
-    <iframe
-      src={course.previewVideo}
-      style={{ height: 220, width: "100%", border: "none" }}
-      allow="autoplay; encrypted-media"
-      allowFullScreen
-    />
-  ) : (
-    <WebView
-      source={{ uri: course.previewVideo }}
-      style={{ height: 220, width: "100%" }}
-    />
-  )
-) : (
-    <>
-      <Image
-        source={{
-          uri: (() => {
-            if (!course?.previewVideo) {
-              return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
-            }
+        {/* 🎥 VIDEO THUMBNAIL */}
+        <Box position="relative">
 
-            try {
-              const videoId = course.previewVideo.split("/embed/")[1];
-              return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-            } catch {
-              return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
-            }
-          })(),
-        }}
-        alt="video"
-        height={220}
-        width="100%"
-      />
+          {/* ▶ SHOW VIDEO WHEN CLICKED */}
+          {playVideo && course?.previewVideo ? (
+            Platform.OS === "web" ? (
+              <iframe
+                src={course.previewVideo}
+                style={{ height: 220, width: "100%", border: "none" }}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              />
+            ) : (
+              <WebView
+                source={{ uri: course.previewVideo }}
+                style={{ height: 220, width: "100%" }}
+              />
+            )
+          ) : (
+            <>
+              <Image
+                source={{
+                  uri: (() => {
+                    if (!course?.previewVideo) {
+                      return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
+                    }
 
-      {/* ▶ PLAY BUTTON */}
-      <Pressable
-        onPress={() => setPlayVideo(true)}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: [{ translateX: -25 }, { translateY: -25 }],
-          backgroundColor: "#ef4444",
-          padding: 12,
-          borderRadius: 50,
-          elevation: 4,
-        }}
-      >
-        <Ionicons name="play" size={22} color="white" />
-      </Pressable>
-    </>
-  )}
+                    try {
+                      const videoId = course.previewVideo.split("/embed/")[1];
+                      return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                    } catch {
+                      return "https://img.youtube.com/vi/ysz5S6PUM-U/maxresdefault.jpg";
+                    }
+                  })(),
+                }}
+                alt="video"
+                height={220}
+                width="100%"
+              />
 
-</Box>
+              {/* ▶ PLAY BUTTON */}
+              <Pressable
+                onPress={() => setPlayVideo(true)}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: [{ translateX: -25 }, { translateY: -25 }],
+                  backgroundColor: "#ef4444",
+                  padding: 12,
+                  borderRadius: 50,
+                  elevation: 4,
+                }}
+              >
+                <Ionicons name="play" size={22} color="white" />
+              </Pressable>
+            </>
+          )}
+
+        </Box>
 
         {/* 📦 CONTENT */}
         <VStack p={5} space={4}>
@@ -107,7 +107,7 @@ export default function CourseSidebar({ course, isMobile }) {
             />
             <DetailRow
               label="Enrolled"
-              value={`${course?.enrolled || 0} Students`}  
+              value={`${course?.enrolled || 0} Students`}
             />
             <DetailRow
               label="Duration"
@@ -115,7 +115,7 @@ export default function CourseSidebar({ course, isMobile }) {
             />
             <DetailRow
               label="Lessons"
-              value={`${course?.lessons || 0} Lessons`}   
+              value={`${course?.lessons || 0} Lessons`}
             />
             <DetailRow
               label="Quiz"
@@ -129,7 +129,7 @@ export default function CourseSidebar({ course, isMobile }) {
               label="Category"
               value={
                 course?.category?.name || course?.category || "General"
-              }   
+              }
             />
             <DetailRow
               label="Language"
