@@ -41,7 +41,7 @@ export default function CourseGrid({ isMobile }) {
             borderRadius="xl"
             overflow="hidden"
             shadow={2}
-            minHeight={320}
+            minHeight={360} // ✅ equal height fix
           >
             <Pressable
               onPress={() =>
@@ -88,24 +88,41 @@ export default function CourseGrid({ isMobile }) {
             </Pressable>
 
             {/* CONTENT */}
-            <VStack p={4} space={2}>
-              {/* TITLE (clickable) */}
-              <Pressable
-                onPress={() =>
-                  navigation.navigate("CourseDetails", { id: course._id })
-                }
-              >
-                <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
-                  {course.title}
+            <VStack p={4} flex={1} justifyContent="space-between">
+              
+              {/* TOP SECTION */}
+              <VStack space={2}>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("CourseDetails", { id: course._id })
+                  }
+                >
+                  <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
+                    {course.title}
+                  </Text>
+                </Pressable>
+
+                <Text color="orange.400" fontSize="xs">
+                  ★★★★★ <Text color="gray.500">(5.0)</Text>
                 </Text>
-              </Pressable>
 
-              {/* RATING */}
-              <Text color="orange.400" fontSize="xs">
-                ★★★★★ <Text color="gray.500">(5.0)</Text>
-              </Text>
+                {/* INSTRUCTOR */}
+                <HStack alignItems="center" space={2}>
+                  <Ionicons
+                    name="person-circle-outline"
+                    size={16}
+                    color="gray"
+                  />
+                  <Text fontSize="xs" color="gray.500">
+                    {course.instructor}
+                  </Text>
+                </HStack>
+              </VStack>
 
-              {/* LESSONS + PRICE */}
+              {/* DIVIDER */}
+              <Box height="1px" bg="gray.200" my={3} />
+
+              {/* BOTTOM SECTION */}
               <HStack justifyContent="space-between" alignItems="center">
                 <Text fontSize="xs" color="gray.500">
                   📚 {course.lessons} Lessons
@@ -115,11 +132,6 @@ export default function CourseGrid({ isMobile }) {
                   Free
                 </Text>
               </HStack>
-
-              {/* INSTRUCTOR */}
-              <Text fontSize="xs" color="gray.500">
-                {course.instructor}
-              </Text>
             </VStack>
           </Box>
         ))}
