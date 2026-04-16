@@ -11,10 +11,8 @@ export default function CourseGrid({ isMobile }) {
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
 
-
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6;
-
 
   useEffect(() => {
     API.get("/courses")
@@ -24,7 +22,6 @@ export default function CourseGrid({ isMobile }) {
       })
       .catch((err) => console.log("ERROR:", err));
   }, []);
-
 
   const indexOfLast = currentPage * ITEMS_PER_PAGE;
   const indexOfFirst = indexOfLast - ITEMS_PER_PAGE;
@@ -44,6 +41,7 @@ export default function CourseGrid({ isMobile }) {
             borderRadius="xl"
             overflow="hidden"
             shadow={2}
+            minHeight={320}
           >
             <Pressable
               onPress={() =>
@@ -70,7 +68,7 @@ export default function CourseGrid({ isMobile }) {
                   borderRadius="md"
                 >
                   <Text color="white" fontSize="xs" fontWeight="bold">
-                    {course.category}
+                    {course.category?.name || course.category}
                   </Text>
                 </Box>
 
@@ -91,16 +89,21 @@ export default function CourseGrid({ isMobile }) {
 
             {/* CONTENT */}
             <VStack p={4} space={2}>
+              {/* TITLE (clickable) */}
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("CourseDetails", { id: course._id })
+                }
+              >
+                <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
+                  {course.title}
+                </Text>
+              </Pressable>
+
+              {/* RATING */}
               <Text color="orange.400" fontSize="xs">
                 ★★★★★ <Text color="gray.500">(5.0)</Text>
               </Text>
-
-              <Text fontWeight="bold" fontSize="md" numberOfLines={2}>
-                {course.title}
-              </Text>
-
-              {/* RATING */}
-              
 
               {/* LESSONS + PRICE */}
               <HStack justifyContent="space-between" alignItems="center">
@@ -121,7 +124,6 @@ export default function CourseGrid({ isMobile }) {
           </Box>
         ))}
       </HStack>
-
 
       <HStack justifyContent="center" mt={4} space={2}>
         {[...Array(totalPages)].map((_, i) => (
