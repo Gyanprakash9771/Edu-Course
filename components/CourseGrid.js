@@ -34,14 +34,14 @@ export default function CourseGrid({ isMobile }) {
         {currentCourses.map((course) => (
           <Box
             key={course._id}
-            width={{ base: "100%", sm: "48%", md: "30%" }}
+            width={{ base: "100%", sm: "48%", md: "33%" }}
             mx={{ base: 0, sm: "1%", md: "1.5%" }}
             mb={6}
             bg="white"
             borderRadius="xl"
             overflow="hidden"
             shadow={2}
-            minHeight={420} // ✅ equal height fix
+            minHeight={420}
           >
             <Pressable
               onPress={() =>
