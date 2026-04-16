@@ -120,7 +120,7 @@ export default function CourseGrid({ isMobile }) {
               </VStack>
 
               {/* DIVIDER */}
-              <Box height="1px" bg="gray.200" my={3} />
+              <Box height="1px" bg="gray.200" mt={5} mb={2}  />
 
               {/* BOTTOM SECTION */}
               <HStack justifyContent="space-between" alignItems="center">
